@@ -1,0 +1,83 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model book {
+  book_id           Int             @id @default(autoincrement())
+  book_name         String?         @db.VarChar(255)
+  number_of_chapter Int?
+  book_description  String?         @db.Text
+  book_category     book_category[] @ignore
+  comment           comment[]       @ignore
+  favorite          favorite[]      @ignore
+  history           history[]       @ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model book_category {
+  book_id     Int?
+  category_id Int?
+  book        book?     @relation(fields: [book_id], references: [book_id], onDelete: NoAction, onUpdate: NoAction, map: "book_category_ibfk_1")
+  category    category? @relation(fields: [category_id], references: [category_id], onDelete: NoAction, onUpdate: NoAction, map: "book_category_ibfk_2")
+
+  @@index([book_id], map: "book_id")
+  @@index([category_id], map: "category_id")
+  @@ignore
+}
+
+model category {
+  category_id   Int             @id @default(autoincrement())
+  category_name String?         @db.VarChar(255)
+  book_category book_category[] @ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model comment {
+  user_id Int?
+  book_id Int?
+  content String? @db.Text
+  user    user?   @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "comment_ibfk_1")
+  book    book?   @relation(fields: [book_id], references: [book_id], onDelete: NoAction, onUpdate: NoAction, map: "comment_ibfk_2")
+
+  @@index([book_id], map: "book_id")
+  @@index([user_id], map: "user_id")
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model favorite {
+  user_id Int?
+  book_id Int?
+  user    user? @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "favorite_ibfk_1")
+  book    book? @relation(fields: [book_id], references: [book_id], onDelete: NoAction, onUpdate: NoAction, map: "favorite_ibfk_2")
+
+  @@index([book_id], map: "book_id")
+  @@index([user_id], map: "user_id")
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model history {
+  user_id Int?
+  book_id Int?
+  user    user? @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "history_ibfk_1")
+  book    book? @relation(fields: [book_id], references: [book_id], onDelete: NoAction, onUpdate: NoAction, map: "history_ibfk_2")
+
+  @@index([book_id], map: "book_id")
+  @@index([user_id], map: "user_id")
+  @@ignore
+}
+
+model user {
+  user_id  Int        @id @default(autoincrement())
+  username String     @unique(map: "username") @db.VarChar(255)
+  password String     @db.VarChar(255)
+  comment  comment[]  @ignore
+  favorite favorite[] @ignore
+  history  history[]  @ignore
+}
