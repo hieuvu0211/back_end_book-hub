@@ -12,14 +12,14 @@ model book {
   book_name         String?         @db.VarChar(255)
   number_of_chapter Int?
   book_description  String?         @db.Text
-  book_category     book_category[] @ignore
-  comment           comment[]       @ignore
-  favorite          favorite[]      @ignore
-  history           history[]       @ignore
+  book_category     book_category[]
+  comment           comment[]
+  favorite          favorite[]
+  history           history[]
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model book_category {
+  id          Int       @id @default(autoincrement())
   book_id     Int?
   category_id Int?
   book        book?     @relation(fields: [book_id], references: [book_id], onDelete: NoAction, onUpdate: NoAction, map: "book_category_ibfk_1")
@@ -27,17 +27,16 @@ model book_category {
 
   @@index([book_id], map: "book_id")
   @@index([category_id], map: "category_id")
-  @@ignore
 }
 
 model category {
   category_id   Int             @id @default(autoincrement())
   category_name String?         @db.VarChar(255)
-  book_category book_category[] @ignore
+  book_category book_category[]
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model comment {
+  id      Int     @id @default(autoincrement())
   user_id Int?
   book_id Int?
   content String? @db.Text
@@ -46,11 +45,10 @@ model comment {
 
   @@index([book_id], map: "book_id")
   @@index([user_id], map: "user_id")
-  @@ignore
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model favorite {
+  id      Int   @id @default(autoincrement())
   user_id Int?
   book_id Int?
   user    user? @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "favorite_ibfk_1")
@@ -58,11 +56,10 @@ model favorite {
 
   @@index([book_id], map: "book_id")
   @@index([user_id], map: "user_id")
-  @@ignore
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model history {
+  id      Int   @id @default(autoincrement())
   user_id Int?
   book_id Int?
   user    user? @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "history_ibfk_1")
@@ -70,14 +67,13 @@ model history {
 
   @@index([book_id], map: "book_id")
   @@index([user_id], map: "user_id")
-  @@ignore
 }
 
 model user {
   user_id  Int        @id @default(autoincrement())
   username String     @unique(map: "username") @db.VarChar(255)
   password String     @db.VarChar(255)
-  comment  comment[]  @ignore
-  favorite favorite[] @ignore
-  history  history[]  @ignore
+  comment  comment[]
+  favorite favorite[]
+  history  history[]
 }
