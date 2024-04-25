@@ -1,12 +1,14 @@
 package com.book.myapplication.VM
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
+import com.book.myapplication.model.User
 
 
 class UserVM : ViewModel() {
-
+    val data: MutableState<User?> = mutableStateOf(null)
+    fun setData(data: User) {
+        this.data.value = data
+    }
 }

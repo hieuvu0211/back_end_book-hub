@@ -12,6 +12,13 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.book.myapplication.VM.UserVM
+import com.book.myapplication.components.MainUi
+import com.book.myapplication.model.User
 import com.book.myapplication.ui.theme.MyappTheme
 
 class MainActivity : ComponentActivity() {
@@ -24,7 +31,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    GreetingPreview()
+                    MyThemeLayout()
                 }
             }
         }
@@ -33,12 +40,26 @@ class MainActivity : ComponentActivity() {
 
 
 @Composable
-fun UserListScreen() {
-    LoginForm()
+fun Navigator() {
+    val navController = rememberNavController()
+    val dataUserVM: UserVM = viewModel()
+    NavHost(navController = navController, startDestination = "login") {
+        composable(route = "login") {
+            LoginForm(navController, dataUserVM)
+        }
+        composable(route = "main/{data}") {
+            MainUi(
+                navController, dataUserVM
+            )
+        }
+    }
 }
 
+@Composable
+fun MyThemeLayout(modifier: Modifier = Modifier) {
+    Navigator()
+}
 
-// Hiển thị từng item trong danh sách
 
 
 @Preview(showBackground = true)
@@ -46,8 +67,7 @@ fun UserListScreen() {
 fun GreetingPreview() {
     MyappTheme {
         Column(modifier = Modifier.fillMaxWidth()) {
-//            LoginForm()
-            UserListScreen()
+            MyThemeLayout()
         }
 
     }

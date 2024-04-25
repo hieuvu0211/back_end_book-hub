@@ -14,7 +14,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.book.myapplication.api.LoginAction
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import com.book.myapplication.VM.UserVM
 import com.book.myapplication.api.apiService
 import com.book.myapplication.model.User
 import kotlinx.coroutines.Dispatchers
@@ -24,18 +26,18 @@ import kotlinx.coroutines.launch
 
 
 @Composable
-fun LoginForm() {
+fun LoginForm(navController: NavController, viewModel: UserVM) {
     var username by rememberSaveable {
-        mutableStateOf("")
+        mutableStateOf("user1")
     }
     var password by rememberSaveable {
-        mutableStateOf("")
+        mutableStateOf("password666")
     }
     var loginClick by rememberSaveable {
         mutableStateOf(false)
     }
     var onLoginResult by rememberSaveable {
-        mutableStateOf("@@@")
+        mutableStateOf(false)
     }
     Column(
         modifier = Modifier
@@ -62,7 +64,7 @@ fun LoginForm() {
         Row() {
             Button(
                 onClick = {
-                    loginClick = !loginClick
+                    loginClick = true
                 },
                 modifier = Modifier.padding(top = 16.dp)
             ) {
@@ -75,17 +77,28 @@ fun LoginForm() {
                 Text(text = "Register")
             }
         }
-        LaunchedEffect(loginClick) {
-            var data = User(username, password)
-            var res = apiService.login(data)
-            if(res.username != null) {
-                onLoginResult = "ok Login successfully"
-            }else {
-                onLoginResult = "Login Failed"
-            }
+        if(loginClick) {
+            LaunchedEffect(loginClick) {
+                try {
 
+                    var data = User(username, password)
+                    val res = apiService.login(data)
+                    if(res.username != null) {
+                        Log.i("eAPI", "${res.username}")
+                        viewModel.setData(res)
+                        navController.navigate("main/$res")
+                    }else {
+                        onLoginResult = true
+                    }
+                }catch (e: Error) {
+                    Log.i("eAPI", "$e")
+                }
+            }
         }
-        Text(text = onLoginResult)
+
+        if(onLoginResult) {
+            Text(text = "Login Failed")
+        }
     }
 
 

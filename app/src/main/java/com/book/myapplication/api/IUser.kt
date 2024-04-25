@@ -18,20 +18,19 @@ private val retrofit = Retrofit.Builder()
 
 interface IUser {
     @GET("getall")
-    suspend fun getallusers() : List<User>
+    suspend fun getAllUsers() : List<User>
 
     @POST("login")
     suspend fun login(@Body res: User) : User
+
+    @POST("register")
+    suspend fun register(@Body res: User) : User
 }
-val apiService = retrofit.create(IUser::class.java)
+val apiService: IUser = retrofit.create(IUser::class.java)
 
  suspend fun fetchUsers(): List<User> {
     return withContext(Dispatchers.IO) {
-        apiService.getallusers()
+        apiService.getAllUsers()
     }
 }
-suspend fun LoginAction(data: User) : Any {
-    return withContext(Dispatchers.IO) {
-        apiService.login(data)
-    }
-}
+
