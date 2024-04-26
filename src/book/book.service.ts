@@ -88,4 +88,31 @@ export class BookService {
       return res.sendStatus(500);
     }
   }
+
+  //get number of chapter
+  async getApiNumberChapter(name: string,chapter: string, @Res() res: Response) {
+    try {
+      const folderPath = path.join(
+        __dirname,
+        '..',
+        `../public/Books/${name}/`,
+        `${chapter}`,
+      );
+      let folderCount: number = 0;
+      const items = fs.readdirSync(folderPath);
+
+      folderCount = items.length ;
+      let ListApiImage:Array<string> = [];
+      for(let i = 1; i <= folderCount; i++){
+        if(i < 10) {
+          ListApiImage.push(`http://localhost:8080/Books/${name}/${chapter}/0${i}.jpg`)
+          continue;
+        }
+        else ListApiImage.push(`http://localhost:8080/Books/${name}/${chapter}/${i}.jpg`)
+      }
+      return res.json({ folderCount });
+    } catch (error) {
+      return res.sendStatus(500);
+    }
+  }
 }

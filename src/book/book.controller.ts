@@ -13,21 +13,26 @@ export class BookController {
   async getImageByName(@Param('name') name: string, @Res() res: Response) {
     return this.bookService.getImageBookByName(name, res);
   }
-  @Get('/image/:imagePath/:chapter/:page')
-  async getImage(
-    @Param('imagePath') imagePath: String,
-    @Param('chapter') chapter: String,
-    @Param('page') page: String,
+
+  @Get('/image/:name/:chapter')
+  async getChapterByName(
+    @Param('name') name: string,
+    @Param('chapter') chapter: string,
     @Res() res: Response,
   ) {
-    return this.bookService.getImage(imagePath, chapter, page, res);
+    return this.bookService.getApiNumberChapter(name, chapter, res);
   }
+  // @Get('/image/:imagePath/:chapter/:page')
+  // async getImage(
+  //   @Param('imagePath') imagePath: String,
+  //   @Param('chapter') chapter: String,
+  //   @Param('page') page: String,
+  //   @Res() res: Response,
+  // ) {
+  //   return this.bookService.getImage(imagePath, chapter, page, res);
+  // }
   @Get(':id')
   async getBookById(@Param('id') id: string) {
     return this.bookService.getBookById(id);
   }
-
-  
-
-  
 }
