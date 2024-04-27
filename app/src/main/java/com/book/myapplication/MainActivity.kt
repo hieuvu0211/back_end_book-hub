@@ -17,8 +17,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.book.myapplication.VM.UserVM
+import com.book.myapplication.components.AboutBook
 import com.book.myapplication.components.MainUi
-import com.book.myapplication.model.User
 import com.book.myapplication.ui.theme.MyappTheme
 
 class MainActivity : ComponentActivity() {
@@ -43,6 +43,7 @@ class MainActivity : ComponentActivity() {
 fun Navigator() {
     val navController = rememberNavController()
     val dataUserVM: UserVM = viewModel()
+
     NavHost(navController = navController, startDestination = "login") {
         composable(route = "login") {
             LoginForm(navController, dataUserVM)
@@ -52,14 +53,18 @@ fun Navigator() {
                 navController, dataUserVM
             )
         }
+        composable(route = "about-book") {backStackEntry ->
+            AboutBook(navController = navController)
+        }
     }
 }
+
+
 
 @Composable
 fun MyThemeLayout(modifier: Modifier = Modifier) {
     Navigator()
 }
-
 
 
 @Preview(showBackground = true)
