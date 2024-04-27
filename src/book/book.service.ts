@@ -110,7 +110,7 @@ export class BookService {
         }
         else ListApiImage.push(`http://localhost:8080/Books/${name}/${chapter}/${i}.jpg`)
       }
-      return res.json({ folderCount });
+      return res.json({ ListApiImage });
     } catch (error) {
       return res.sendStatus(500);
     }
