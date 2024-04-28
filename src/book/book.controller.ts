@@ -31,7 +31,7 @@ export class BookController {
   // ) {
   //   return this.bookService.getImage(imagePath, chapter, page, res);
   // }
-  @Get(':id')
+  @Get('/getbyid/:id')
   async getBookById(@Param('id') id: string) {
     return this.bookService.getBookById(id);
   }

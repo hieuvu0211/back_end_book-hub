@@ -19,6 +19,8 @@ export class BookService {
   }
 
   async getBookById(id: string) {
+    
+    
     try {
       const res = await this.prisma.book.findUnique({
         where: {
@@ -28,9 +30,11 @@ export class BookService {
       if (res) {
         return res;
       } else {
+        console.log("error ");
         return { status: 400, message: 'No book found' };
       }
     } catch (error) {
+      console.log("error = ",error);
       throw new Error(error);
     }
   }
@@ -105,13 +109,14 @@ export class BookService {
       let ListApiImage:Array<string> = [];
       for(let i = 1; i <= folderCount; i++){
         if(i < 10) {
-          ListApiImage.push(`http://localhost:8080/Books/${name}/${chapter}/0${i}.jpg`)
+          ListApiImage.push(`http://10.0.2.2:8080/Books/${name}/${chapter}/0${i}.jpg`)
           continue;
         }
-        else ListApiImage.push(`http://localhost:8080/Books/${name}/${chapter}/${i}.jpg`)
+        else ListApiImage.push(`http://10.0.2.2:8080/Books/${name}/${chapter}/${i}.jpg`)
       }
       return res.json({ ListApiImage });
     } catch (error) {
+      console.log("error = ",error);
       return res.sendStatus(500);
     }
   }
