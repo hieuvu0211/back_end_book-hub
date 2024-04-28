@@ -1,3 +1,4 @@
+
 import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,14 +15,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.book.myapplication.VM.UserVM
 import com.book.myapplication.api.apiService
 import com.book.myapplication.model.User
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 
 
@@ -34,7 +31,7 @@ fun LoginForm(navController: NavController, viewModel: UserVM) {
         mutableStateOf("password666")
     }
     var loginClick by rememberSaveable {
-        mutableStateOf(false)
+        mutableStateOf(true)
     }
     var onLoginResult by rememberSaveable {
         mutableStateOf(false)
@@ -83,15 +80,15 @@ fun LoginForm(navController: NavController, viewModel: UserVM) {
 
                     var data = User(username, password)
                     val res = apiService.login(data)
+
                     if(res.username != null) {
-                        Log.i("eAPI", "${res.username}")
                         viewModel.setData(res)
                         navController.navigate("main/$res")
                     }else {
                         onLoginResult = true
                     }
                 }catch (e: Error) {
-                    Log.i("eAPI", "$e")
+                    Log.i("resultAPI", "$e")
                 }
             }
         }

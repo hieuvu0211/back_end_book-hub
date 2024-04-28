@@ -16,9 +16,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.book.myapplication.VM.BookVM
 import com.book.myapplication.VM.UserVM
 import com.book.myapplication.components.AboutBook
 import com.book.myapplication.components.MainUi
+import com.book.myapplication.components.ReadBook
 import com.book.myapplication.ui.theme.MyappTheme
 
 class MainActivity : ComponentActivity() {
@@ -43,7 +45,7 @@ class MainActivity : ComponentActivity() {
 fun Navigator() {
     val navController = rememberNavController()
     val dataUserVM: UserVM = viewModel()
-
+    val book_vm : BookVM = viewModel()
     NavHost(navController = navController, startDestination = "login") {
         composable(route = "login") {
             LoginForm(navController, dataUserVM)
@@ -53,8 +55,14 @@ fun Navigator() {
                 navController, dataUserVM
             )
         }
-        composable(route = "about-book") {backStackEntry ->
-            AboutBook(navController = navController)
+        composable(route = "about-book/{id}") {backStackEntry ->
+            backStackEntry.arguments?.getString("id")
+                ?.let { AboutBook(navController = navController, it) }
+        }
+        composable(route = "read-book/{id}/{chapter}") { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id") ?: ""
+            val chapter = backStackEntry.arguments?.getString("chapter") ?: ""
+            ReadBook(id, chapter)
         }
     }
 }
