@@ -115,36 +115,6 @@ fun MainUi(navController: NavController, data: UserVM) {
     var bookData = rememberSaveable {
         mutableStateOf<Book?>(null)
     }
-
-//    Scaffold(
-//        topBar = {
-//            // Add a top app bar
-//            TopAppBar(
-//                title = { Text(text = "My App") },
-//                Modifier.background(color = Color.Green)
-//            )
-//        },
-//        content = {
-//            // Add content to the body of the screen
-//            Column {
-//                Text(text = "Content goes here")
-//            }
-//        },
-//        bottomBar = {
-//            // Add a bottom navigation bar
-//            BottomAppBar(
-//                containerColor = MaterialTheme.colorScheme.primaryContainer,
-//                contentColor = MaterialTheme.colorScheme.primary,
-//            ) {
-//                Button(onClick = { /*TODO*/ }) {
-//                    Text(text = "Home")
-//
-//                }
-//            }
-//        },
-//        floatingActionButtonPosition = FabPosition.End,
-//    )
-
     val book_vm = viewModel<BookVM>()
     BookList(book_vm = book_vm) {book ->
         navController.navigate("about-book/${book.book_id}")
