@@ -46,8 +46,6 @@ fun ReadBook(bookName: String, chapterCount: String) {
     }
     val data by bookViewModel.listLinks
     Column() {
-        Text(text = "This is final activity with data:" +
-                " name = $bookName")
         LazyColumn() {
             items(data?.imageUrls.orEmpty()) {url ->
 //                Text(text = url)
