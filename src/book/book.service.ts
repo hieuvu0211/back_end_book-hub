@@ -120,4 +120,21 @@ export class BookService {
       return res.sendStatus(500);
     }
   }
+
+  async SearchBookByName(name: string) {
+    try {
+      const res = await this.prisma.book.findMany({
+        where: {
+          book_name: {
+            contains: name,
+          },
+        },
+      });
+      if (res.length > 0 || res) {
+        return res;
+      } else return { status: 400, message: 'No book found' };
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
 }

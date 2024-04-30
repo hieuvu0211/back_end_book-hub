@@ -12,6 +12,7 @@ model book {
   book_name         String?         @db.VarChar(255)
   number_of_chapter Int?
   book_description  String?         @db.Text
+  number_of_likes   Int?
   book_category     book_category[]
   comment           comment[]
   favorite          favorite[]
