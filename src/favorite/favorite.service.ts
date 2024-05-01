@@ -13,7 +13,24 @@ export class FavoriteService {
                 },
             });
             if (res.length > 0 || res) {
-                return res;
+                try {
+                    const listRes = []
+                    res.forEach(element => {
+                        listRes.push(element.book_id)
+                    });
+                    const handleRes = await this.prisma.book.findMany({
+                        where: {
+                            book_id : {
+                                in : listRes
+                            }
+                        }
+                    })
+                    if(handleRes.length > 0 || handleRes) {
+                        return handleRes;
+                    } else return { status: 400, message: 'No favorite found' };
+                } catch (error) {
+                    throw new Error(error);
+                }
             } else return { status: 400, message: 'No favorite found' };
         } catch (error) {
             throw new Error(error);
