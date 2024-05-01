@@ -5,6 +5,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.book.myapplication.api.HandleError
 import com.book.myapplication.api.ImageListResponse
 import com.book.myapplication.api.bookService
 import com.book.myapplication.model.Book
@@ -23,6 +24,9 @@ class BookVM : ViewModel() {
     private var _listLinks = mutableStateOf<ImageListResponse?>(null)
     val listLinks : State<ImageListResponse?> = _listLinks
 
+    private var _listResultSearch : MutableList<Book> = mutableListOf<Book>()
+    val listResultSearch : MutableList<Book> = _listResultSearch
+
     fun LoadListBooks(): MutableList<Book> {
         try {
             val result = runBlocking(Dispatchers.IO) {
@@ -31,9 +35,10 @@ class BookVM : ViewModel() {
             for (item in result) {
                 bookLists.add(item)
             }
+            Log.i("resultAPI", " result = $result")
             return bookLists
-        } catch (e: Error) {
-            Log.i("resultAPI", "$e")
+        } catch (e: Exception) {
+            HandleError(e)
         }
         return bookLists
     }
@@ -48,7 +53,7 @@ class BookVM : ViewModel() {
                     Log.i("resultAPI", "failed data = ${response.message()}")
                 }
             } catch (e: Exception) {
-                Log.i("resultAPI", "Exception = $e")
+                HandleError(e)
             }
         }
     }
@@ -63,8 +68,22 @@ class BookVM : ViewModel() {
                     Log.i("resultAPI", "failed data1 = ${response.message()}")
                 }
             }catch (e : Exception) {
-                Log.i("resultAPI", "Error = $e")
+                HandleError(e)
             }
         }
+    }
+
+    fun loadSearchResult(name :String): MutableList<Book> {
+        viewModelScope.launch {
+            try {
+                val res = bookService.searchBook(name)
+                if(res.isSuccessful) {
+                    _listResultSearch = res.body() as MutableList<Book>
+                }
+            }catch (e : Exception) {
+                HandleError(e)
+            }
+        }
+        return _listResultSearch
     }
 }

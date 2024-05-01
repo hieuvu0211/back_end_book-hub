@@ -19,11 +19,15 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -121,6 +125,7 @@ fun AboutBook(navController: NavController, id : String) {
     //data : book_name, author?, number_of_chapter, description
     val name: String = data?.book_name ?: ""
     val numberOfChapter : Int = data?.number_of_chapter ?: 1
+    val numberOfLikes : Int = data?.number_of_likes ?: 1
     Column(
         modifier = Modifier.fillMaxSize(),
 
@@ -138,7 +143,7 @@ fun AboutBook(navController: NavController, id : String) {
             horizontalArrangement = Arrangement.SpaceAround
         ) {
             Column(modifier = Modifier .padding(8.dp)) {
-                Text(text = "58.1K", fontWeight = FontWeight.Bold, fontSize = 24.sp)
+                Text(text = numberOfLikes.toString(), fontWeight = FontWeight.Bold, fontSize = 24.sp)
                 Text(text = "likes", fontWeight = FontWeight.Light)
             }
             Column(modifier = Modifier .padding(8.dp)) {
@@ -156,7 +161,18 @@ fun AboutBook(navController: NavController, id : String) {
                         tint = Color.Yellow,
                         modifier = Modifier.size(16.dp))
                 }
-                Text(text = "likes", fontWeight = FontWeight.Light)
+                Text(text = "rate", fontWeight = FontWeight.Light)
+            }
+        }
+        Row {
+            var isFollow by rememberSaveable {
+                mutableStateOf(false)
+            }
+            ///code here later
+            Button(onClick = { /*TODO*/ },
+                modifier = Modifier.padding(start = 24.dp),
+                colors = ButtonDefaults.buttonColors()) {
+                Text(text = "Follow")
             }
         }
         Row(
@@ -172,3 +188,4 @@ fun AboutBook(navController: NavController, id : String) {
         }
     }
 }
+

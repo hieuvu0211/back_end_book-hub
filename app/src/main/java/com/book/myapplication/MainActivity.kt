@@ -19,8 +19,10 @@ import androidx.navigation.compose.rememberNavController
 import com.book.myapplication.VM.BookVM
 import com.book.myapplication.VM.UserVM
 import com.book.myapplication.components.AboutBook
+import com.book.myapplication.components.FollowList
 import com.book.myapplication.components.MainUi
 import com.book.myapplication.components.ReadBook
+import com.book.myapplication.components.ResultSearch
 import com.book.myapplication.ui.theme.MyappTheme
 
 class MainActivity : ComponentActivity() {
@@ -46,13 +48,13 @@ fun Navigator() {
     val navController = rememberNavController()
     val dataUserVM: UserVM = viewModel()
     val book_vm : BookVM = viewModel()
-    NavHost(navController = navController, startDestination = "login") {
+    NavHost(navController = navController, startDestination = "main") {
         composable(route = "login") {
             LoginForm(navController, dataUserVM)
         }
-        composable(route = "main/{data}") {
+        composable(route = "main") {
             MainUi(
-                navController, dataUserVM
+                navController
             )
         }
         composable(route = "about-book/{id}") {backStackEntry ->
@@ -63,6 +65,14 @@ fun Navigator() {
             val id = backStackEntry.arguments?.getString("id") ?: ""
             val chapter = backStackEntry.arguments?.getString("chapter") ?: ""
             ReadBook(id, chapter)
+        }
+        composable(route = "follow/{id}") {backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id") ?: ""
+            FollowList(idUser = id)
+        }
+        composable(route = "result-search/{name}") {backStackEntry ->
+            val name = backStackEntry.arguments?.getString("name") ?: ""
+            ResultSearch(navController,name = name)
         }
     }
 }

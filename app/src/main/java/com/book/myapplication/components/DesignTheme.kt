@@ -125,7 +125,8 @@ fun listBookFakeData(): MutableList<Book> {
         val data = Book("1",
             "Attack_on_Titan",
             i + 1,
-            "Description 1")
+            "Description 1",
+            1)
         res.add(data)
     }
     return res

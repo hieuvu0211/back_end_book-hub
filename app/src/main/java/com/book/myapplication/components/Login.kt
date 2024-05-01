@@ -4,6 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -42,7 +43,7 @@ import androidx.navigation.NavController
 import com.book.myapplication.R
 import com.book.myapplication.VM.UserVM
 import com.book.myapplication.api.apiService
-import com.book.myapplication.model.User
+import com.book.myapplication.model.UserLogin
 
 
 
@@ -53,10 +54,10 @@ fun LoginForm(navController: NavController, viewModel: UserVM) {
         .border(BorderStroke(1.dp, Color.White))
         .fillMaxWidth()
     var username by rememberSaveable {
-        mutableStateOf("")
+        mutableStateOf("user1")
     }
     var password by rememberSaveable {
-        mutableStateOf("")
+        mutableStateOf("password666")
     }
     var loginClick by rememberSaveable {
         mutableStateOf(false)
@@ -69,7 +70,9 @@ fun LoginForm(navController: NavController, viewModel: UserVM) {
     ) {
         Icon(
             Icons.Filled.ArrowBack, "backToMain",
-            modifier = Modifier.padding(start = 10.dp, top = 10.dp)
+            modifier = Modifier.padding(start = 10.dp, top = 10.dp).clickable {
+                navController.navigate("main")
+            }
         )
 
         Column(
@@ -164,8 +167,7 @@ fun LoginForm(navController: NavController, viewModel: UserVM) {
                 Log.i("resultAPI", "onclicked1")
                 LaunchedEffect(loginClick) {
                     try {
-                        Log.i("resultAPI", "onclicked2")
-                        var data = User(username, password)
+                        var data = UserLogin(username, password)
                         val res = apiService.login(data)
                         Log.i("resultAPI", "data = $res")
                         if(res.username != null) {

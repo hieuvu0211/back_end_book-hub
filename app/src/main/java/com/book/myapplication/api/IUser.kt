@@ -1,6 +1,7 @@
 package com.book.myapplication.api
 
 import com.book.myapplication.model.User
+import com.book.myapplication.model.UserLogin
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.Retrofit
@@ -21,10 +22,10 @@ interface IUser {
     suspend fun getAllUsers() : List<User>
 
     @POST("login")
-    suspend fun login(@Body res: User) : User
+    suspend fun login(@Body res: UserLogin) : User
 
     @POST("register")
-    suspend fun register(@Body res: User) : User
+    suspend fun register(@Body res: UserLogin) : UserLogin
 }
 val apiService: IUser = retrofit.create(IUser::class.java)
 

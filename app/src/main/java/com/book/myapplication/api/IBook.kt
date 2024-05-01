@@ -31,6 +31,9 @@ interface IBook {
         @Path("name") name: String,
         @Path("chapter") chapter: String
     ): Response<ImageListResponse>
+
+    @GET("search/{name}")
+    suspend fun searchBook(@Path("name") name :String) : Response<List<Book>>
 }
 
 val bookService = retrofit.create(IBook::class.java)

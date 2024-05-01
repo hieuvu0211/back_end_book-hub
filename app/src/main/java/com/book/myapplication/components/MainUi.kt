@@ -2,6 +2,7 @@ package com.book.myapplication.components
 
 import android.annotation.SuppressLint
 import android.util.Log
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -72,7 +74,9 @@ fun ImageFromLocalhostUrl(
                     // You can customize image loading parameters here
                 }).build()
         )
-    Box(modifier = Modifier.fillMaxWidth().clickable { onBookClick(book) }) {
+    Box(modifier = Modifier
+        .fillMaxWidth()
+        .clickable { onBookClick(book) }) {
         Image(
             painter = painter,
             contentDescription = null,
@@ -117,20 +121,19 @@ fun StoryCard(
 
 //render List Book data
 @Composable
-fun BookList(book_vm : BookVM, onBookClick: (Book) -> Unit) {
-    Column {
-        var ListBooks = (book_vm.LoadListBooks() ?: emptyList()).toMutableList()
+fun BookList(list_books : List<Book>,book_vm : BookVM, onBookClick: (Book) -> Unit) {
+//    Column {
 
         LazyVerticalGrid(columns = GridCells.Fixed(4)) {
-            items(ListBooks) { item ->
+            items(list_books) { item ->
                 StoryCard(item, onBookClick)
             }
         }
-    }
+//    }
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchBarSample() {
+fun SearchBarSample(navController: NavController) {
     var text by rememberSaveable { mutableStateOf("") }
     var active by rememberSaveable { mutableStateOf(false) }
 
@@ -144,7 +147,11 @@ fun SearchBarSample() {
                 .semantics { traversalIndex = -1f },
             query = text,
             onQueryChange = { text = it },
-            onSearch = { active = false },
+            onSearch = { active = false
+                       if(text != "") {
+                           navController.navigate("result-search/$text")
+                       }
+                       },
             active = active,
             onActiveChange = {
                 active = it
@@ -156,24 +163,22 @@ fun SearchBarSample() {
 
     }
 }
+@OptIn(ExperimentalFoundationApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun MainUi(navController: NavController, data: UserVM) {
-    val res = data.data.value // handle data receive
-    var ListBooks = rememberSaveable {
-        mutableListOf<Book>()
-    }
-    var bookData = rememberSaveable {
-        mutableStateOf<Book?>(null)
-    }
+fun MainUi(navController: NavController) {
+//    val res = data.data.value // handle data receive
     val book_vm = viewModel<BookVM>()
+    var listBooks = (book_vm.LoadListBooks() ?: emptyList()).toMutableList()
     val themeIcons = Modifier.size(100.dp)
     Scaffold(
         bottomBar = {
             BottomAppBar(
                 containerColor = Color(16,52,166),
                 contentPadding = PaddingValues(start = 16.dp, end = 16.dp),
-                modifier = Modifier.fillMaxWidth().size(65.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .size(65.dp)
             ) {
                 Surface(
                     shape = CircleShape,
@@ -187,11 +192,13 @@ fun MainUi(navController: NavController, data: UserVM) {
                     ) {
                         IconButton(onClick = {
                             Log.i("resultAPI", "Home")
+                            navController.navigate("main")
                         }) {
                             Icon(Icons.Filled.Home, contentDescription = null, modifier = themeIcons)
                         }
                         IconButton(onClick = {
                             Log.i("resultAPI", "List Follow")
+                            navController.navigate("follow/1")
                         }) {
                             Icon(Icons.Default.Favorite, "", modifier = themeIcons)
                         }
@@ -202,8 +209,10 @@ fun MainUi(navController: NavController, data: UserVM) {
                         }
                         IconButton(onClick = {
                             Log.i("resultAPI", "ProfileI")
+                            navController.navigate("login")
                         }) {
                             Icon(Icons.Default.AccountBox, "", modifier = themeIcons)
+
                         }
                     }
                 }
@@ -223,20 +232,20 @@ fun MainUi(navController: NavController, data: UserVM) {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                SearchBarSample()
+                SearchBarSample(navController)
             }
             Spacer(modifier = Modifier.height(16.dp))
             Column(
                 modifier = Modifier.padding(start = 12.dp),
             ) {
-                Text(text = "Top favorite stories of the week")
-                BookListHorizon() {book ->
-                    Log.i("resultAPI", "ok1")
-                }
-                Text(text = "List stories")
-                BookList(book_vm = book_vm) {book ->
-                    navController.navigate("about-book/${book.book_id}")
-                }
+                    Text(text = "Top favorite stories of the week")
+                    BookListHorizon() {book ->
+                        Log.i("resultAPI", "ok1")
+                    }
+                    Text(text = "List stories")
+                    BookList(listBooks,book_vm = book_vm) {book ->
+                        navController.navigate("about-book/${book.book_id}")
+                    }
             }
         }
     }
