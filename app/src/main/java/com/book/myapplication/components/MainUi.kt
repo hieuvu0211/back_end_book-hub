@@ -38,8 +38,11 @@ import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -56,9 +59,14 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import com.book.myapplication.GlobalState.UserData
 import com.book.myapplication.VM.BookVM
 import com.book.myapplication.VM.UserVM
 import com.book.myapplication.model.Book
+import com.book.myapplication.model.User
+import com.google.gson.Gson
+
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -85,7 +93,6 @@ fun ImageFromLocalhostUrl(
                 .clip(RoundedCornerShape(25.dp))
         )
     }
-
 }
 
 @Composable
@@ -171,6 +178,15 @@ fun MainUi(navController: NavController) {
     val book_vm = viewModel<BookVM>()
     var listBooks = (book_vm.LoadListBooks() ?: emptyList()).toMutableList()
     val themeIcons = Modifier.size(100.dp)
+    val context = LocalContext.current
+    val dataUserStore = UserData(context)
+    val scope = rememberCoroutineScope()
+    val getDataUserFromLocal = dataUserStore.getDataUserFromLocal.collectAsState(initial = User(0,"",""))
+    val gson = Gson()
+
+
+
+    Log.i("Get123Local", "data after get 1 = ${getDataUserFromLocal.value?.user_id}")
     Scaffold(
         bottomBar = {
             BottomAppBar(
@@ -208,8 +224,10 @@ fun MainUi(navController: NavController) {
                             Icon(Icons.Default.Search, "", modifier = themeIcons)
                         }
                         IconButton(onClick = {
-                            Log.i("resultAPI", "ProfileI")
-                            navController.navigate("login")
+                            if(getDataUserFromLocal.value != null) {
+                                navController.navigate("account")
+                            }
+                            else navController.navigate("login")
                         }) {
                             Icon(Icons.Default.AccountBox, "", modifier = themeIcons)
 

@@ -1,6 +1,7 @@
 package com.book.myapplication
 
 import LoginForm
+import android.accounts.Account
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -18,6 +19,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.book.myapplication.VM.BookVM
 import com.book.myapplication.VM.UserVM
+import com.book.myapplication.components.AboutAccount
 import com.book.myapplication.components.AboutBook
 import com.book.myapplication.components.FollowList
 import com.book.myapplication.components.MainUi
@@ -73,6 +75,9 @@ fun Navigator() {
         composable(route = "result-search/{name}") {backStackEntry ->
             val name = backStackEntry.arguments?.getString("name") ?: ""
             ResultSearch(navController,name = name)
+        }
+        composable(route = "account") {backStackEntry ->
+            AboutAccount(navController)
         }
     }
 }

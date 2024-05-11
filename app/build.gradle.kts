@@ -87,4 +87,7 @@ dependencies {
     implementation ("com.github.bumptech.glide:compose:1.0.0-beta01")
     implementation("io.coil-kt:coil-compose:2.6.0")
 
+    //data store
+    implementation("androidx.datastore:datastore-preferences-core:1.1.1")
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
 }

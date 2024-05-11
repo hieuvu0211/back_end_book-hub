@@ -28,23 +28,26 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.book.myapplication.GlobalState.UserData
 import com.book.myapplication.R
 import com.book.myapplication.VM.UserVM
 import com.book.myapplication.api.apiService
 import com.book.myapplication.model.UserLogin
-
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -54,10 +57,10 @@ fun LoginForm(navController: NavController, viewModel: UserVM) {
         .border(BorderStroke(1.dp, Color.White))
         .fillMaxWidth()
     var username by rememberSaveable {
-        mutableStateOf("user1")
+        mutableStateOf("")
     }
     var password by rememberSaveable {
-        mutableStateOf("password666")
+        mutableStateOf("")
     }
     var loginClick by rememberSaveable {
         mutableStateOf(false)
@@ -65,14 +68,22 @@ fun LoginForm(navController: NavController, viewModel: UserVM) {
     var onLoginResult by rememberSaveable {
         mutableStateOf(false)
     }
+    val context = LocalContext.current
+    val dataUserStore = UserData(context)
+    val scope = rememberCoroutineScope()
+
+
+
     Column(
         modifier = Modifier.fillMaxWidth(),
     ) {
         Icon(
             Icons.Filled.ArrowBack, "backToMain",
-            modifier = Modifier.padding(start = 10.dp, top = 10.dp).clickable {
-                navController.navigate("main")
-            }
+            modifier = Modifier
+                .padding(start = 10.dp, top = 10.dp)
+                .clickable {
+                    navController.navigate("main")
+                }
         )
 
         Column(
@@ -172,7 +183,10 @@ fun LoginForm(navController: NavController, viewModel: UserVM) {
                         Log.i("resultAPI", "data = $res")
                         if(res.username != null) {
                             viewModel.setData(res)
-                            navController.navigate("main/$res")
+                            scope.launch {
+                                dataUserStore.SetDataUserInLocal(res)
+                            }
+                            navController.navigate("main")
                         }else {
                             onLoginResult = true
                         }
