@@ -66,17 +66,36 @@ export class FavoriteService {
         }
     }
 
-    async DeleteFavorite(data : Prisma.favoriteUncheckedCreateInput) {
+    async deleteFavorite(userId: String, bookId: String) {
         try {
-            const res = await this.prisma.favorite.deleteMany({
+            const result = await this.prisma.favorite.deleteMany({
+                where: {
+                    user_id: Number(userId),
+                    book_id: Number(bookId),
+                }
+            });
+    
+            if (result.count > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+
+    async CheckFavoriteByUserIdAndBookId(data : Prisma.favoriteUncheckedCreateInput) {
+        try {
+            const res = await this.prisma.favorite.findFirst({
                 where: {
                     user_id : data.user_id,
                     book_id : data.book_id
                 }
             })
             if(res) {
-                return res
-            } else return { status: 400, message: 'Failed to delete favorite' }
+                return true
+            } else return false
         } catch (error) {
             throw new Error(error)
         }

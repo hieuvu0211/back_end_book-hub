@@ -31,4 +31,9 @@ export class BookController {
   async searchBookByName(@Param('name') name: string) {
     return this.bookService.SearchBookByName(name);
   }
+
+  @Get('/getFavorite')
+  async GetTopTenFavorite() {
+    return this.bookService.GetTopTenBookByNumberOfLike();
+  }
 }
