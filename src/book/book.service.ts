@@ -137,4 +137,20 @@ export class BookService {
       throw new Error(error);
     }
   }
+
+  async GetTopTenBookByNumberOfLike() {
+    try {
+      const res = await this.prisma.book.findMany({
+        orderBy: {
+          number_of_likes: 'desc',
+        },
+        take: 10,
+      });
+      if (res.length > 0 || res) {
+        return res;
+      } else return { status: 400, message: 'No book found' };
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
 }
