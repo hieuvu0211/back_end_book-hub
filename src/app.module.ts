@@ -4,6 +4,7 @@ import { BookModule } from './book/book.module';
 import { BookCategoryModule } from './book_category/book_category.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { FavoriteModule } from './favorite/favorite.module';
+import { HistoryModule } from './history/history.module';
 
 
 @Module({
@@ -13,6 +14,7 @@ import { FavoriteModule } from './favorite/favorite.module';
     PrismaModule,
     BookCategoryModule,
     FavoriteModule,
+    HistoryModule,
   ],
   controllers: [],
   providers: [],

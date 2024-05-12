@@ -11,4 +11,9 @@ export class BookCategoryController {
     async getCategoryByBookId(@Param('id') id: string) {
         return this.bookcate.findCategoryByBookId(id);
     }
+
+    @Get('/listCate/:list')
+    async getBookByListCategoryId(@Param('list') list: string) {
+        return this.bookcate.findBookByListCategoryId(list);
+    }
 }
