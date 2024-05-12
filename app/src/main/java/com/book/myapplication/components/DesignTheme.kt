@@ -163,8 +163,8 @@ fun StoryCard1(
 }
 
 @Composable
-fun BookListHorizon(onBookClick: (Book) -> Unit) {
-    val listBooks = listBookFakeData()
+fun BookListHorizon(book_vm: BookVM,onBookClick: (Book) -> Unit) {
+    val listBooks = (book_vm.loadTopTenBook() ?: emptyList()).toMutableList()
     LazyRow() {
         items(listBooks) {item ->
             StoryCard1(item, onBookClick)

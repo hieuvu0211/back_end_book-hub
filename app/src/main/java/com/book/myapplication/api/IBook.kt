@@ -34,6 +34,9 @@ interface IBook {
 
     @GET("search/{name}")
     suspend fun searchBook(@Path("name") name :String) : Response<List<Book>>
+
+    @GET("getFavorite")
+    suspend fun getTopTenBook() : Response<List<Book>>
 }
 
 val bookService = retrofit.create(IBook::class.java)

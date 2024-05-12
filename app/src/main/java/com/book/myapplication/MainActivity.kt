@@ -70,7 +70,7 @@ fun Navigator() {
         }
         composable(route = "follow/{id}") {backStackEntry ->
             val id = backStackEntry.arguments?.getString("id") ?: ""
-            FollowList(idUser = id)
+            FollowList(navController,idUser = id)
         }
         composable(route = "result-search/{name}") {backStackEntry ->
             val name = backStackEntry.arguments?.getString("name") ?: ""

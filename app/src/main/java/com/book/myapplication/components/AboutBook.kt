@@ -24,7 +24,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -43,8 +45,13 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import com.book.myapplication.GlobalState.UserData
 import com.book.myapplication.R
 import com.book.myapplication.VM.BookVM
+import com.book.myapplication.VM.FavoriteVM
+import com.book.myapplication.api.HandleError
+import com.book.myapplication.model.Favorite
+import com.book.myapplication.model.User
 
 
 //@SuppressLint("SuspiciousIndentation")
@@ -103,7 +110,6 @@ fun ChapterItem(navController: NavController,chapterName :String,chapterCount: S
     // Each item in the list is a Text composable
     Box(modifier = Modifier.clickable {
         navController.navigate("read-book/$chapterName/$chapterCount")
-        Log.i("resultAPI", "name = $chapterName , chapter = $chapterCount")
     }) {
         Text(
 
@@ -113,16 +119,33 @@ fun ChapterItem(navController: NavController,chapterName :String,chapterCount: S
                 .padding(8.dp)
         )
     }
-
 }
 @Composable
 fun AboutBook(navController: NavController, id : String) {
+    val context = LocalContext.current
+    val dataUserStore = UserData(context)
+    val getDataUserFromLocal =
+        dataUserStore.getDataUserFromLocal.collectAsState(initial = User(0, "", ""))
+    var idUser by rememberSaveable {
+        mutableIntStateOf(0)
+    }
+    idUser = getDataUserFromLocal.value?.user_id ?: 0
     val book_vm : BookVM = viewModel()
+    val favorite_vm : FavoriteVM = viewModel()
     val data by book_vm.book_data
     LaunchedEffect(Unit) {
         book_vm.loadBookById(id)
     }
-    //data : book_name, author?, number_of_chapter, description
+    var isFollow by rememberSaveable {
+        mutableStateOf(false)
+    }
+    var dataFavorite = Favorite(0,0)
+    if(idUser != 0) {
+        dataFavorite = Favorite( idUser, id.toInt())
+        favorite_vm.IsFollow(dataFavorite)
+    }
+
+    favorite_vm.isFollowLiveData.observeForever { newValue -> isFollow = newValue }
     val name: String = data?.book_name ?: ""
     val numberOfChapter : Int = data?.number_of_chapter ?: 1
     val numberOfLikes : Int = data?.number_of_likes ?: 1
@@ -165,15 +188,28 @@ fun AboutBook(navController: NavController, id : String) {
             }
         }
         Row {
-            var isFollow by rememberSaveable {
-                mutableStateOf(false)
-            }
+
             ///code here later
-            Button(onClick = { /*TODO*/ },
-                modifier = Modifier.padding(start = 24.dp),
-                colors = ButtonDefaults.buttonColors()) {
-                Text(text = "Follow")
+            if(isFollow) {
+                Button(onClick = {
+                    favorite_vm.DeleteFromFavorite(idUser.toString(), id)
+                    isFollow = false
+                },
+                    modifier = Modifier.padding(start = 24.dp),
+                    colors = ButtonDefaults.buttonColors()) {
+                    Text(text = "Unfollow")
+                }
+            }else{
+                Button(onClick = {
+                    favorite_vm.AddToFavorite(dataFavorite)
+                    isFollow = true
+                },
+                    modifier = Modifier.padding(start = 24.dp),
+                    colors = ButtonDefaults.buttonColors()) {
+                    Text(text = "Follow")
+                }
             }
+
         }
         Row(
             modifier = Modifier

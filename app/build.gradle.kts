@@ -90,4 +90,7 @@ dependencies {
     //data store
     implementation("androidx.datastore:datastore-preferences-core:1.1.1")
     implementation("androidx.datastore:datastore-preferences:1.1.1")
+
+    //grid layout
+    implementation("androidx.gridlayout:gridlayout:1.0.0")
 }

@@ -27,6 +27,9 @@ class BookVM : ViewModel() {
     private var _listResultSearch : MutableList<Book> = mutableListOf<Book>()
     val listResultSearch : MutableList<Book> = _listResultSearch
 
+    private var _listTop10Book : MutableList<Book> = mutableListOf<Book>()
+    val listTop10Book : MutableList<Book> = _listTop10Book
+
     fun LoadListBooks(): MutableList<Book> {
         try {
             val result = runBlocking(Dispatchers.IO) {
@@ -35,7 +38,6 @@ class BookVM : ViewModel() {
             for (item in result) {
                 bookLists.add(item)
             }
-            Log.i("resultAPI", " result = $result")
             return bookLists
         } catch (e: Exception) {
             HandleError(e)
@@ -49,8 +51,6 @@ class BookVM : ViewModel() {
                 val response = bookService.getBookById(id)
                 if (response.isSuccessful) {
                     _bookData.value = response.body()
-                }else{
-                    Log.i("resultAPI", "failed data = ${response.message()}")
                 }
             } catch (e: Exception) {
                 HandleError(e)
@@ -85,5 +85,19 @@ class BookVM : ViewModel() {
             }
         }
         return _listResultSearch
+    }
+
+    fun loadTopTenBook() : MutableList<Book> {
+        viewModelScope.launch {
+            try {
+                val res = bookService.getTopTenBook()
+                if(res.isSuccessful) {
+                    _listTop10Book = res.body() as MutableList<Book>
+                }
+            }catch (e : Exception) {
+                HandleError(e)
+            }
+        }
+        return _listTop10Book
     }
 }

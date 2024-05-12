@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,9 +18,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -54,24 +52,23 @@ import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.book.myapplication.GlobalState.UserData
 import com.book.myapplication.VM.BookVM
-import com.book.myapplication.VM.UserVM
 import com.book.myapplication.model.Book
 import com.book.myapplication.model.User
 import com.google.gson.Gson
 
-import kotlinx.coroutines.launch
-
 
 @Composable
 fun ImageFromLocalhostUrl(
-    book : Book,
+    book: Book,
     onBookClick: (Book) -> Unit,
 ) {
     val url: String = "http://10.0.2.2:8080/Books/${book.book_name}/image.png"
@@ -83,7 +80,7 @@ fun ImageFromLocalhostUrl(
                 }).build()
         )
     Box(modifier = Modifier
-        .fillMaxWidth()
+//        .fillMaxWidth()
         .clickable { onBookClick(book) }) {
         Image(
             painter = painter,
@@ -97,30 +94,30 @@ fun ImageFromLocalhostUrl(
 
 @Composable
 fun StoryCard(
-    book : Book,
+    book: Book,
     onBookClick: (Book) -> Unit,
 ) {
     Column(
         modifier = Modifier
             .padding(8.dp)
-            .clip(MaterialTheme.shapes.medium)
-            .background(MaterialTheme.colorScheme.surface)
+//            .clip(MaterialTheme.shapes.medium)
+//            .background(MaterialTheme.colorScheme.surface)
 
 //            .padding(8.dp)
     ) {
         ImageFromLocalhostUrl(book, onBookClick)
         Spacer(modifier = Modifier.height(8.dp))
 
-            Text(
-                text = if (book.book_name.length > 10) {
-                    "${book.book_name.take(10)}..."
-                } else {
-                    book.book_name
-                }, style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(horizontal = 8.dp),
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
-            )
+        Text(
+            text = if (book.book_name.length > 10) {
+                "${book.book_name.take(10)}..."
+            } else {
+                book.book_name
+            }, style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.padding(horizontal = 8.dp),
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis
+        )
 
 
     }
@@ -128,16 +125,28 @@ fun StoryCard(
 
 //render List Book data
 @Composable
-fun BookList(list_books : List<Book>,book_vm : BookVM, onBookClick: (Book) -> Unit) {
-//    Column {
-
-        LazyVerticalGrid(columns = GridCells.Fixed(4)) {
-            items(list_books) { item ->
-                StoryCard(item, onBookClick)
+fun BookList(list_books: List<Book>, book_vm: BookVM, onBookClick: (Book) -> Unit) {
+    val sizeListBook = list_books.size / 2
+//        LazyVerticalGrid(columns = GridCells.Fixed(4)) {
+//            items(list_books) { item ->
+//                StoryCard(item, onBookClick)
+//            }
+//        }
+    Column {
+        for (i in 0..sizeListBook - 1 step 3) {
+            Row (
+                modifier = Modifier.fillMaxWidth().size(200.dp)
+            ) {
+                for (j in i..i + 3) {
+                    if(j <= sizeListBook) {
+                        StoryCard(list_books[j], onBookClick)
+                    }
+                }
             }
         }
-//    }
+    }
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchBarSample(navController: NavController) {
@@ -154,11 +163,12 @@ fun SearchBarSample(navController: NavController) {
                 .semantics { traversalIndex = -1f },
             query = text,
             onQueryChange = { text = it },
-            onSearch = { active = false
-                       if(text != "") {
-                           navController.navigate("result-search/$text")
-                       }
-                       },
+            onSearch = {
+                active = false
+                if (text != "") {
+                    navController.navigate("result-search/$text")
+                }
+            },
             active = active,
             onActiveChange = {
                 active = it
@@ -170,36 +180,38 @@ fun SearchBarSample(navController: NavController) {
 
     }
 }
+
 @OptIn(ExperimentalFoundationApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MainUi(navController: NavController) {
 //    val res = data.data.value // handle data receive
     val book_vm = viewModel<BookVM>()
-    var listBooks = (book_vm.LoadListBooks() ?: emptyList()).toMutableList()
+    val listBooks = (book_vm.LoadListBooks() ?: emptyList()).toMutableList()
     val themeIcons = Modifier.size(100.dp)
     val context = LocalContext.current
     val dataUserStore = UserData(context)
-    val scope = rememberCoroutineScope()
-    val getDataUserFromLocal = dataUserStore.getDataUserFromLocal.collectAsState(initial = User(0,"",""))
-    val gson = Gson()
+    val getDataUserFromLocal =
+        dataUserStore.getDataUserFromLocal.collectAsState(initial = User(0, "", ""))
+    var idUser by rememberSaveable {
+        mutableIntStateOf(0)
+    }
+    idUser = getDataUserFromLocal.value?.user_id ?: 0
 
-
-
-    Log.i("Get123Local", "data after get 1 = ${getDataUserFromLocal.value?.user_id}")
     Scaffold(
         bottomBar = {
             BottomAppBar(
-                containerColor = Color(16,52,166),
+                containerColor = Color.White,
                 contentPadding = PaddingValues(start = 16.dp, end = 16.dp),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .size(65.dp)
+                    .size(40.dp)
+                    .border(0.1.dp, Color(202, 247, 183))
             ) {
                 Surface(
                     shape = CircleShape,
                     contentColor = Color.White,
-                    color = Color(16,52,166),
+                    color = Color.White,
                 ) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -210,26 +222,45 @@ fun MainUi(navController: NavController) {
                             Log.i("resultAPI", "Home")
                             navController.navigate("main")
                         }) {
-                            Icon(Icons.Filled.Home, contentDescription = null, modifier = themeIcons)
+                            Icon(
+                                Icons.Filled.Home,
+                                contentDescription = null,
+                                modifier = themeIcons,
+                                tint = Color.Black
+                            )
                         }
                         IconButton(onClick = {
                             Log.i("resultAPI", "List Follow")
-                            navController.navigate("follow/1")
+                            navController.navigate("follow/${idUser}")
                         }) {
-                            Icon(Icons.Default.Favorite, "", modifier = themeIcons)
+                            Icon(
+                                Icons.Default.Favorite,
+                                "",
+                                modifier = themeIcons,
+                                tint = Color.Black
+                            )
                         }
                         IconButton(onClick = {
                             Log.i("resultAPI", "Search")
                         }) {
-                            Icon(Icons.Default.Search, "", modifier = themeIcons)
+                            Icon(
+                                Icons.Default.Search,
+                                "",
+                                modifier = themeIcons,
+                                tint = Color.Black
+                            )
                         }
                         IconButton(onClick = {
-                            if(getDataUserFromLocal.value != null) {
+                            if (getDataUserFromLocal.value != null) {
                                 navController.navigate("account")
-                            }
-                            else navController.navigate("login")
+                            } else navController.navigate("login")
                         }) {
-                            Icon(Icons.Default.AccountBox, "", modifier = themeIcons)
+                            Icon(
+                                Icons.Default.AccountBox,
+                                "",
+                                modifier = themeIcons,
+                                tint = Color.Black
+                            )
 
                         }
                     }
@@ -239,9 +270,11 @@ fun MainUi(navController: NavController) {
             }
         },
 
-        ) {innerPadding  ->
+        ) { innerPadding ->
         Column(
-            modifier = Modifier.padding(innerPadding),
+            modifier = Modifier
+                .padding(innerPadding)
+                .background(color = Color(245, 245, 245)),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Row(
@@ -253,20 +286,35 @@ fun MainUi(navController: NavController) {
                 SearchBarSample(navController)
             }
             Spacer(modifier = Modifier.height(16.dp))
-            Column(
-                modifier = Modifier.padding(start = 12.dp),
+            LazyColumn(
+                modifier = Modifier
+                    .padding(start = 12.dp)
+                    .background(color = Color(245, 245, 245)),
             ) {
+                item {
                     Text(text = "Top favorite stories of the week")
-                    BookListHorizon() {book ->
-                        Log.i("resultAPI", "ok1")
-                    }
-                    Text(text = "List stories")
-                    BookList(listBooks,book_vm = book_vm) {book ->
+                    BookListHorizon(book_vm) { book ->
                         navController.navigate("about-book/${book.book_id}")
                     }
+                    Text(text = "List stories")
+//                        BookList(listBooks,book_vm = book_vm) {book ->
+//                            navController.navigate("about-book/${book.book_id}")
+//                        }
+                    BookList(listBooks, book_vm) {book ->
+                        navController.navigate("about-book/${book.book_id}")
+                    }
+
+                }
             }
         }
     }
 
 
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ShowMainUiPreview(modifier: Modifier = Modifier) {
+    val navController = rememberNavController()
+    MainUi(navController = navController)
 }

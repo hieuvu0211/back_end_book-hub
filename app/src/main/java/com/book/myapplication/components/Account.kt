@@ -23,6 +23,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -263,6 +264,14 @@ fun AboutAccount(navController: NavController) {
             .background(color = Color(245, 245, 245))
     ) {
         item{
+            Icon(
+                Icons.Filled.ArrowBack, "backToMain",
+                modifier = Modifier
+                    .size(32.dp)
+                    .clickable {
+                        navController.navigate("main")
+                    }
+            )
             AccountInformation(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -332,7 +341,6 @@ fun fakeListBook(): MutableList<Book> {
 @Preview(showBackground = true)
 @Composable
 fun AboutAccountPreView(modifier: Modifier = Modifier) {
-    val dataFake = fakeListBook()
     val navController = rememberNavController()
     AboutAccount(navController)
 }
