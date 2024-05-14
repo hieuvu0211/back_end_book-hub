@@ -66,12 +66,16 @@ export class FavoriteService {
         }
     }
 
-    async deleteFavorite(userId: String, bookId: String) {
+    async deleteFavorite(id : String) {
+        const userID = id.split('-')[0]
+        const bookID = id.split('-')[1]
         try {
             const result = await this.prisma.favorite.deleteMany({
                 where: {
-                    user_id: Number(userId),
-                    book_id: Number(bookId),
+                    AND: [
+                        { user_id: Number(userID) },
+                        { book_id: Number(bookID) },
+                    ],
                 }
             });
     
@@ -85,17 +89,22 @@ export class FavoriteService {
         }
     }
 
-    async CheckFavoriteByUserIdAndBookId(data : Prisma.favoriteUncheckedCreateInput) {
+    async CheckFavoriteByUserIdAndBookId(id : String) {
+        const userID = id.split('-')[0]
+        const bookID = id.split('-')[1]
+        
         try {
             const res = await this.prisma.favorite.findFirst({
                 where: {
-                    user_id : data.user_id,
-                    book_id : data.book_id
+                    AND: [
+                        { user_id: Number(userID) },
+                        { book_id: Number(bookID) },
+                    ],
                 }
             })
             if(res) {
-                return true
-            } else return false
+                return true;
+            } else return false;
         } catch (error) {
             throw new Error(error)
         }

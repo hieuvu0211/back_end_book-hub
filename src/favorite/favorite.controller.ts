@@ -15,13 +15,13 @@ export class FavoriteController {
         return this.favoriteService.AddFavorite(data);
     }
 
-    @Delete('/deletefavorite/:userid/:bookid')
-    async DeleteFavorite(@Param('userid') userid: string, @Param('userid') bookid: string) {
-        return await this.favoriteService.deleteFavorite(userid, bookid);
+    @Delete('/deletefavorite/:id')
+    async DeleteFavorite(@Param('id') id: string) {
+        return await this.favoriteService.deleteFavorite(id);
     }
 
-    @Post('/checkfavorite')
-    async CheckFavorite(@Body() data) {
-        return this.favoriteService.CheckFavoriteByUserIdAndBookId(data);
+    @Get('/checkfavorite/:id')
+    async CheckFavorite(@Param('id') id: string) {
+        return this.favoriteService.CheckFavoriteByUserIdAndBookId(id);
     }
 }

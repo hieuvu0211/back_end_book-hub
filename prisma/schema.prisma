@@ -48,6 +48,7 @@ model comment {
   @@index([user_id], map: "user_id")
 }
 
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model favorite {
   id      Int   @id @default(autoincrement())
   user_id Int?
@@ -60,11 +61,14 @@ model favorite {
 }
 
 model history {
-  id      Int   @id @default(autoincrement())
-  user_id Int?
-  book_id Int?
-  user    user? @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "history_ibfk_1")
-  book    book? @relation(fields: [book_id], references: [book_id], onDelete: NoAction, onUpdate: NoAction, map: "history_ibfk_2")
+  id             Int       @id @default(autoincrement())
+  user_id        Int?
+  book_id        Int?
+  start_date     DateTime? @db.Timestamp(0)
+  last_read_page Int?
+  status         String?   @db.VarChar(255)
+  user           user?     @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "history_ibfk_1")
+  book           book?     @relation(fields: [book_id], references: [book_id], onDelete: NoAction, onUpdate: NoAction, map: "history_ibfk_2")
 
   @@index([book_id], map: "book_id")
   @@index([user_id], map: "user_id")
