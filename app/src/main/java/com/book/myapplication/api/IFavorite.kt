@@ -1,7 +1,7 @@
 package com.book.myapplication.api
 
 import com.book.myapplication.model.Book
-import com.book.myapplication.model.Favorite
+import com.book.myapplication.model.Favorite1
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -22,16 +22,15 @@ interface IFavorite {
     @GET("getbyuserid/{id}")
     suspend fun GetDataByUserId(@Path("id") id: String): Response<List<Book>>
 
-    @POST("checkfavorite")
-    suspend fun CheckFavorite(@Body data: Favorite): Response<Boolean>
+    @GET("checkfavorite/{id}")
+    suspend fun CheckFavorite(@Path("id") id: String,): Response<Boolean>
 
     @POST("addfavorite")
-    suspend fun AddToFavorite(@Body data: Favorite): Response<Favorite>
+    suspend fun AddToFavorite(@Body data: Favorite1): Response<Favorite1>
 
-    @DELETE("deletefavorite/{userid}/{bookid}")
+    @DELETE("deletefavorite/{id}")
     suspend fun DeleteFromFavorite(
-        @Path("userid") userid: String,
-        @Path("bookid") bookid: String
+        @Path("id") id: String,
     ): Response<Boolean>
 }
 

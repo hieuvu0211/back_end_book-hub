@@ -1,29 +1,25 @@
 package com.book.myapplication.VM
 
 import android.util.Log
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.book.myapplication.api.HandleError
-import com.book.myapplication.api.ImageListResponse
 import com.book.myapplication.api.favoriteService
-import com.book.myapplication.model.Book
-import com.book.myapplication.model.Favorite
+import com.book.myapplication.model.Favorite1
 import kotlinx.coroutines.launch
 
 class FavoriteVM : ViewModel() {
     private val _isFollowLiveData = MutableLiveData<Boolean>()
     val isFollowLiveData: LiveData<Boolean> = _isFollowLiveData
 
-    fun IsFollow(data : Favorite) : LiveData<Boolean> {
+    fun IsFollow(data : Favorite1) : LiveData<Boolean> {
 
 
         viewModelScope.launch {
             try {
-                val res = favoriteService.CheckFavorite(data)
+                val res = favoriteService.CheckFavorite("${data.user_id}-${data.book_id}")
                 if(res.isSuccessful) {
                     Log.i("resultAPI", "final = ${res.body()}")
                     _isFollowLiveData.postValue(res.body() ?: false)
@@ -36,7 +32,7 @@ class FavoriteVM : ViewModel() {
         return _isFollowLiveData;
     }
 
-    fun AddToFavorite(data : Favorite) : Boolean {
+    fun AddToFavorite(data : Favorite1) : Boolean {
         var check = false
         viewModelScope.launch {
             try {
@@ -54,12 +50,11 @@ class FavoriteVM : ViewModel() {
         }
         return check
     }
-    fun DeleteFromFavorite(userid : String, bookid: String) : Boolean {
-        Log.i("resultAPI", "check userid = $userid  and bookid = $bookid")
+    fun DeleteFromFavorite(id: String) : Boolean {
         var check = false
         viewModelScope.launch {
             try {
-                val res = favoriteService.DeleteFromFavorite(userid, bookid)
+                val res = favoriteService.DeleteFromFavorite(id)
                 if(res.isSuccessful) {
                     Log.i("resultAPI", "data = ${res.body()}")
                     if(res.body() == true) {

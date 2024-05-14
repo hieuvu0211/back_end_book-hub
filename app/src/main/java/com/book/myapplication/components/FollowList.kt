@@ -54,7 +54,7 @@ fun CardStoryFollow(
             Text(text = book.book_name, fontSize = 20.sp, fontWeight = FontWeight(600))
             Text(text = "chapter : ${book.number_of_chapter}")
             Button(onClick = {
-                favorite_vm.DeleteFromFavorite(userid, book.book_id)
+                favorite_vm.DeleteFromFavorite("${userid}-${book.book_id}")
                 Log.i("resultAPI", "result = ${book.book_id}, userid = ${userid}")
             }) {
                 Text(text = "Unfollow", color = Color.Red)
