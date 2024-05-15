@@ -45,7 +45,7 @@ import androidx.navigation.NavController
 import com.book.myapplication.GlobalState.UserData
 import com.book.myapplication.R
 import com.book.myapplication.VM.UserVM
-import com.book.myapplication.api.apiService
+import com.book.myapplication.api.userService
 import com.book.myapplication.model.UserLogin
 import kotlinx.coroutines.launch
 
@@ -179,7 +179,7 @@ fun LoginForm(navController: NavController, viewModel: UserVM) {
                 LaunchedEffect(loginClick) {
                     try {
                         var data = UserLogin(username, password)
-                        val res = apiService.login(data)
+                        val res = userService.login(data)
                         Log.i("resultAPI", "data = $res")
                         if(res.username != null) {
                             viewModel.setData(res)

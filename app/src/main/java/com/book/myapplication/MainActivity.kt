@@ -22,6 +22,7 @@ import com.book.myapplication.VM.UserVM
 import com.book.myapplication.components.AboutAccount
 import com.book.myapplication.components.AboutBook
 import com.book.myapplication.components.FollowList
+import com.book.myapplication.components.HistoryView
 import com.book.myapplication.components.MainUi
 import com.book.myapplication.components.ReadBook
 import com.book.myapplication.components.ResultSearch
@@ -78,6 +79,9 @@ fun Navigator() {
         }
         composable(route = "account") {backStackEntry ->
             AboutAccount(navController)
+        }
+        composable(route = "history") {backStackEntry ->
+            HistoryView(navController)
         }
     }
 }

@@ -55,7 +55,6 @@ fun CardStoryFollow(
             Text(text = "chapter : ${book.number_of_chapter}")
             Button(onClick = {
                 favorite_vm.DeleteFromFavorite("${userid}-${book.book_id}")
-                Log.i("resultAPI", "result = ${book.book_id}, userid = ${userid}")
             }) {
                 Text(text = "Unfollow", color = Color.Red)
             }
@@ -116,8 +115,6 @@ fun FollowList(navController: NavController,idUser: String) {
         }
 
     }
-
-
 }
 
 @Preview(showBackground = true)

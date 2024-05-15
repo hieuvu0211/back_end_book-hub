@@ -119,7 +119,6 @@ fun StoryCard(
             overflow = TextOverflow.Ellipsis
         )
 
-
     }
 }
 
