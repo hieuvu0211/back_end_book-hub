@@ -1,11 +1,9 @@
-package com.book.myapplication.VM
+package com.book.myapplication.ViewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.book.myapplication.model.Book
 import com.book.myapplication.model.History
 import kotlinx.coroutines.launch
-import androidx.lifecycle.viewModelScope
 import com.book.myapplication.api.HandleError
 import com.book.myapplication.api.historyService
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -1,4 +1,4 @@
-package com.book.myapplication.VM
+package com.book.myapplication.ViewModel
 
 import android.util.Log
 import androidx.lifecycle.LiveData

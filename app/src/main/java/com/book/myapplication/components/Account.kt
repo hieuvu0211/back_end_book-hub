@@ -54,8 +54,8 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.book.myapplication.GlobalState.UserData
 import com.book.myapplication.R
-import com.book.myapplication.VM.HistoryVM
-import com.book.myapplication.VM.UserVM
+import com.book.myapplication.ViewModel.HistoryVM
+import com.book.myapplication.ViewModel.UserVM
 import com.book.myapplication.model.History
 import com.book.myapplication.model.User
 import kotlinx.coroutines.launch

@@ -1,7 +1,6 @@
 package com.book.myapplication
 
 import LoginForm
-import android.accounts.Account
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -17,8 +16,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.book.myapplication.VM.BookVM
-import com.book.myapplication.VM.UserVM
+import com.book.myapplication.ViewModel.BookVM
+import com.book.myapplication.ViewModel.UserVM
 import com.book.myapplication.components.AboutAccount
 import com.book.myapplication.components.AboutBook
 import com.book.myapplication.components.FollowList

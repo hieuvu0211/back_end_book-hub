@@ -41,8 +41,8 @@ import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.book.myapplication.GlobalState.UserData
-import com.book.myapplication.VM.BookVM
-import com.book.myapplication.VM.FavoriteVM
+import com.book.myapplication.ViewModel.BookVM
+import com.book.myapplication.ViewModel.FavoriteVM
 import com.book.myapplication.model.Favorite1
 import com.book.myapplication.model.User
 

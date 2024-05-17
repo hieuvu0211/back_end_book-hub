@@ -1,15 +1,10 @@
-package com.book.myapplication.VM
+package com.book.myapplication.ViewModel
 
-import androidx.collection.emptyIntSet
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.book.myapplication.api.HandleError
 import com.book.myapplication.api.userService
-import com.book.myapplication.model.History
 import com.book.myapplication.model.User
-import com.book.myapplication.model.UserLogin
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
