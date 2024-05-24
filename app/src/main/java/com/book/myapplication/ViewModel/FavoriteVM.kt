@@ -21,7 +21,6 @@ class FavoriteVM : ViewModel() {
             try {
                 val res = favoriteService.CheckFavorite("${data.user_id}-${data.book_id}")
                 if(res.isSuccessful) {
-                    Log.i("resultAPI", "final = ${res.body()}")
                     _isFollowLiveData.postValue(res.body() ?: false)
                 }
             }catch (e: Exception) {
@@ -38,7 +37,6 @@ class FavoriteVM : ViewModel() {
             try {
                 val res = favoriteService.AddToFavorite(data)
                 if(res.isSuccessful) {
-                    Log.i("resultAPI", "data = ${res.body()}")
                     if(res.body()?.user_id != 0) {
                         check = true
                     }
@@ -56,7 +54,6 @@ class FavoriteVM : ViewModel() {
             try {
                 val res = favoriteService.DeleteFromFavorite(id)
                 if(res.isSuccessful) {
-                    Log.i("resultAPI", "data = ${res.body()}")
                     if(res.body() == true) {
                         check = true
                     }

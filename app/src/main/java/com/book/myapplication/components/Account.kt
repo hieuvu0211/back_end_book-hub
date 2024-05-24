@@ -88,11 +88,14 @@ fun AccountInformation(modifier: Modifier = Modifier, username: String, follow: 
 }
 
 @Composable
-fun MarkCard(iconResource: Int, content: String, modifier: Modifier = Modifier) {
+fun MarkCard(iconResource: Int, content: String, handleNavigate : () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .size(30.dp),
+            .size(30.dp)
+            .clickable {
+                       handleNavigate()
+            },
         verticalAlignment = Alignment.CenterVertically
     ) {
 
@@ -248,9 +251,9 @@ fun HistoryViewStory(
                     }
                 }
                 Spacer(modifier = Modifier.height(5.dp))
-                MarkCard(R.drawable.downloadicon, "Downloaded")
+                MarkCard(R.drawable.downloadicon, "Downloaded", handleNavigate = {})
                 Spacer(modifier = Modifier.height(15.dp))
-                MarkCard(R.drawable.bookmark, "Favorite List")
+                MarkCard(R.drawable.bookmark, "Favorite List", handleNavigate = {})
             }
         }
 
@@ -337,17 +340,19 @@ fun OtherList(navController: NavController, modifier: Modifier = Modifier) {
             .fillMaxWidth()
             .background(Color.White)
     ) {
-        MarkCard(R.drawable.shop, "Shop")
+        MarkCard(R.drawable.shop, "Shop", handleNavigate = {})
         Spacer(modifier = Modifier.height(15.dp))
-        MarkCard(R.drawable.wallet_solid, "Wallet")
+        MarkCard(R.drawable.wallet_solid, "Wallet", handleNavigate = {})
         Spacer(modifier = Modifier.height(15.dp))
-        MarkCard(R.drawable.event, "Event")
+        MarkCard(R.drawable.event, "Event", handleNavigate = {})
         Spacer(modifier = Modifier.height(15.dp))
-        MarkCard(R.drawable.setting, "Setting")
+        MarkCard(R.drawable.setting, "Setting", handleNavigate = {
+            navController.navigate(ScreenView.SettingView("1"))
+        })
         Spacer(modifier = Modifier.height(15.dp))
-        MarkCard(R.drawable.help, "Help")
+        MarkCard(R.drawable.help, "Help", handleNavigate = {})
         Spacer(modifier = Modifier.height(15.dp))
-        MarkCard(R.drawable.feedback, "Feedback")
+        MarkCard(R.drawable.feedback, "Feedback", handleNavigate = {})
         Spacer(modifier = Modifier.height(15.dp))
         Row(
             modifier = Modifier

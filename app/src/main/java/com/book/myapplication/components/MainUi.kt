@@ -47,6 +47,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.traversalIndex
@@ -59,6 +60,7 @@ import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.book.myapplication.GlobalState.UserData
+import com.book.myapplication.R
 import com.book.myapplication.ViewModel.BookVM
 import com.book.myapplication.model.Book
 import com.book.myapplication.model.User
@@ -124,15 +126,12 @@ fun StoryCard(
 @Composable
 fun BookList(list_books: List<Book>, book_vm: BookVM, onBookClick: (Book) -> Unit) {
     val sizeListBook = list_books.size / 2
-//        LazyVerticalGrid(columns = GridCells.Fixed(4)) {
-//            items(list_books) { item ->
-//                StoryCard(item, onBookClick)
-//            }
-//        }
     Column {
         for (i in 0..sizeListBook - 1 step 3) {
             Row (
-                modifier = Modifier.fillMaxWidth().size(200.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .size(200.dp)
             ) {
                 for (j in i..i + 3) {
                     if(j <= sizeListBook) {
@@ -170,7 +169,7 @@ fun SearchBarSample(navController: NavController) {
             onActiveChange = {
                 active = it
             },
-            placeholder = { Text("Search") },
+            placeholder = { Text(text = stringResource(id = R.string.search_placeholder)) },
             leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
             trailingIcon = { Icon(Icons.Default.MoreVert, contentDescription = null) },
         ) {}
@@ -289,7 +288,7 @@ fun MainUi(navController: NavController) {
                     .background(color = Color(245, 245, 245)),
             ) {
                 item {
-                    Text(text = "Top favorite stories of the week")
+                    Text(text = stringResource(id = R.string.title_topfavorite))
                     BookListHorizon(book_vm) { book ->
                         navController.navigate("about-book/${book.book_id}")
                     }
