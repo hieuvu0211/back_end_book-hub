@@ -292,7 +292,7 @@ fun MainUi(navController: NavController) {
                     BookListHorizon(book_vm) { book ->
                         navController.navigate("about-book/${book.book_id}")
                     }
-                    Text(text = "List stories")
+                    Text(text = stringResource(id = R.string.list_stories))
 //                        BookList(listBooks,book_vm = book_vm) {book ->
 //                            navController.navigate("about-book/${book.book_id}")
 //                        }

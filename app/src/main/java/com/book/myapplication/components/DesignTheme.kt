@@ -139,8 +139,8 @@ fun BookListHorizon(book_vm: BookVM,onBookClick: (Book) -> Unit) {
         }
     }
 }
-@Preview(showBackground = true)
-@Composable
-fun DesignPreview() {
-    DesignTheme()
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun DesignPreview() {
+//    DesignTheme()
+//}

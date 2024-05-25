@@ -12,9 +12,11 @@ import androidx.compose.runtime.Composable
 
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.book.myapplication.R
 import com.book.myapplication.ViewModel.BookVM
 import com.book.myapplication.model.Book
 
@@ -26,8 +28,10 @@ fun ResultSearch(navController: NavController,name : String?) {
     }
     
     if(name != null) {
-        Column(modifier = Modifier.fillMaxSize().padding(12.dp)) {
-            Text(text = "Result for: $name")
+        Column(modifier = Modifier
+            .fillMaxSize()
+            .padding(12.dp)) {
+            Text(text = stringResource(id = R.string.result_for)+": $name")
             data = book_vm.loadSearchResult(name)
 
             LazyVerticalGrid(columns = GridCells.Fixed(2),

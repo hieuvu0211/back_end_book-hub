@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -41,6 +42,7 @@ import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.book.myapplication.GlobalState.UserData
+import com.book.myapplication.R
 import com.book.myapplication.ViewModel.BookVM
 import com.book.myapplication.ViewModel.FavoriteVM
 import com.book.myapplication.model.Favorite1
@@ -115,6 +117,7 @@ fun ChapterItem(navController: NavController,chapterName :String,chapterCount: S
 }
 @Composable
 fun AboutBook(navController: NavController, id : String) {
+
     val context = LocalContext.current
     val dataUserStore = UserData(context)
     val getDataUserFromLocal =
@@ -160,11 +163,11 @@ fun AboutBook(navController: NavController, id : String) {
         ) {
             Column(modifier = Modifier .padding(8.dp)) {
                 Text(text = numberOfLikes.toString(), fontWeight = FontWeight.Bold, fontSize = 24.sp)
-                Text(text = "likes", fontWeight = FontWeight.Light)
+                Text(text = stringResource(id = R.string.likes), fontWeight = FontWeight.Light)
             }
             Column(modifier = Modifier .padding(8.dp)) {
                 Text(text = "1.87M", fontWeight = FontWeight.Bold, fontSize = 24.sp)
-                Text(text = "follow", fontWeight = FontWeight.Light)
+                Text(text = stringResource(id = R.string.Follows), fontWeight = FontWeight.Light)
             }
             Column(modifier = Modifier .padding(8.dp)) {
                 Row(
@@ -177,7 +180,7 @@ fun AboutBook(navController: NavController, id : String) {
                         tint = Color.Yellow,
                         modifier = Modifier.size(16.dp))
                 }
-                Text(text = "rate", fontWeight = FontWeight.Light)
+                Text(text = stringResource(id = R.string.Rate), fontWeight = FontWeight.Light)
             }
         }
         Row {
@@ -190,7 +193,7 @@ fun AboutBook(navController: NavController, id : String) {
                 },
                     modifier = Modifier.padding(start = 24.dp),
                     colors = ButtonDefaults.buttonColors()) {
-                    Text(text = "Unfollow")
+                    Text(text = stringResource(id = R.string.Unfollow))
                 }
             }else{
                 Button(onClick = {
@@ -199,7 +202,7 @@ fun AboutBook(navController: NavController, id : String) {
                 },
                     modifier = Modifier.padding(start = 24.dp),
                     colors = ButtonDefaults.buttonColors()) {
-                    Text(text = "Follow")
+                    Text(text = stringResource(id = R.string.Follow))
                 }
             }
 
@@ -210,7 +213,7 @@ fun AboutBook(navController: NavController, id : String) {
                 .padding(start = 16.dp, end = 16.dp),
             horizontalArrangement = Arrangement.SpaceAround
         ) {
-            Text(text = "Episodes", fontWeight = FontWeight(600))
+            Text(text = stringResource(id = R.string.Episodes), fontWeight = FontWeight(600))
         }
         Column {
             ChapterList(navController,name,numberOfChapter)

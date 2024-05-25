@@ -1,8 +1,5 @@
 package com.book.myapplication.components
 
-import androidx.navigation.NavController
-import androidx.versionedparcelable.ParcelField
-import com.book.myapplication.ViewModel.LocalSettingsVM
 import kotlinx.serialization.Serializable
 
 @Serializable

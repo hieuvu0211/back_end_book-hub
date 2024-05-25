@@ -13,21 +13,25 @@ import com.book.myapplication.model.User
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.util.Locale
 
-
+val Context.dataStore by preferencesDataStore("setting")
 class LanguageData(private val context: Context) {
     companion object {
-        private val Context.dataStore : DataStore<Preferences> by preferencesDataStore(name = "languageData")
-        val IS_LANGUAGE_DATA = stringPreferencesKey("language_data")
+        private val IS_LANGUAGE_DATA = stringPreferencesKey("language_data")
     }
-    val getDataUserFromLocal : Flow<String> = context.dataStore.data
-        .map { preferences  ->
-            preferences[IS_LANGUAGE_DATA] ?: ""
+
+
+
+    val getDataUserFromLocal : Flow<Locale> = context.dataStore.data
+        .map { preferences ->
+            val languageCode = preferences[IS_LANGUAGE_DATA] ?: Locale.getDefault().language
+            Locale(languageCode)
         }
 
-    suspend fun SetDataUserInLocal(data: String) {
+    suspend fun SetDataUserInLocal(data: Locale) {
         context.dataStore.edit { preferences ->
-            preferences[IS_LANGUAGE_DATA] = data
+            preferences[IS_LANGUAGE_DATA] = data.language
         }
     }
 }

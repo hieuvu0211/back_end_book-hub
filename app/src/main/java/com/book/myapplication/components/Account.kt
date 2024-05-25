@@ -23,6 +23,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.KeyboardArrowRight
@@ -42,6 +43,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -82,19 +84,23 @@ fun AccountInformation(modifier: Modifier = Modifier, username: String, follow: 
             verticalArrangement = Arrangement.SpaceAround
         ) {
             Text(text = username, fontSize = 25.sp)
-            Text(text = "$follow Follows")
+            Row {
+                Text(text = "$follow")
+                Text(text = stringResource(id = R.string.Follows))
+            }
+            
         }
     }
 }
 
 @Composable
-fun MarkCard(iconResource: Int, content: String, handleNavigate : () -> Unit) {
+fun MarkCard(iconResource: Int, content: Int, handleNavigate : () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .size(30.dp)
             .clickable {
-                       handleNavigate()
+                handleNavigate()
             },
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -105,9 +111,9 @@ fun MarkCard(iconResource: Int, content: String, handleNavigate : () -> Unit) {
             modifier = Modifier.size(20.dp)
         )
         Spacer(modifier = Modifier.width(5.dp))
-        Text(text = content)
+        Text(text = stringResource(id = content))
         Spacer(modifier = Modifier.weight(1f))
-        Icon(Icons.Default.KeyboardArrowRight, "")
+        Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, "")
     }
 }
 
@@ -194,7 +200,7 @@ fun MoreHistoryCard(navController: NavController) {
                 )
             }
             Spacer(modifier = Modifier.height(10.dp))
-            Text(text = "View more", color = Color.White, fontWeight = FontWeight(600))
+            Text(text = stringResource(id = R.string.view_more), color = Color.White, fontWeight = FontWeight(600))
         }
     }
 }
@@ -223,7 +229,7 @@ fun HistoryViewStory(
                         .height(40.dp)
                 ) {
                     Text(
-                        text = "History", fontSize = 20.sp,
+                        text = stringResource(id = R.string.History), fontSize = 20.sp,
                         fontWeight = FontWeight(600),
                     )
                     Spacer(modifier = Modifier.weight(1f))
@@ -251,9 +257,9 @@ fun HistoryViewStory(
                     }
                 }
                 Spacer(modifier = Modifier.height(5.dp))
-                MarkCard(R.drawable.downloadicon, "Downloaded", handleNavigate = {})
+                MarkCard(R.drawable.downloadicon, R.string.Downloaded, handleNavigate = {})
                 Spacer(modifier = Modifier.height(15.dp))
-                MarkCard(R.drawable.bookmark, "Favorite List", handleNavigate = {})
+                MarkCard(R.drawable.bookmark, R.string.Favorite_list, handleNavigate = {})
             }
         }
 
@@ -289,8 +295,8 @@ fun StoryAndPremium(modifier: Modifier = Modifier) {
                 }
                 Spacer(modifier = Modifier.width(10.dp))
                 Column {
-                    Text(text = "Post stories", fontSize = 20.sp, fontWeight = FontWeight(600))
-                    Text(text = "post your favorite stories", fontWeight = FontWeight(300))
+                    Text(text = stringResource(id = R.string.Post_stories), fontSize = 20.sp, fontWeight = FontWeight(600))
+                    Text(text = stringResource(id = R.string.Post_your_favorite_stories), fontWeight = FontWeight(300))
                 }
             }
         }
@@ -321,9 +327,9 @@ fun StoryAndPremium(modifier: Modifier = Modifier) {
 
                 Spacer(modifier = Modifier.weight(1f))
                 Column {
-                    Text(text = "My premium", fontSize = 20.sp, fontWeight = FontWeight(600))
-                    Text(text = "More recharge,", fontWeight = FontWeight(300))
-                    Text(text = "More discounts", fontWeight = FontWeight(300))
+                    Text(text = stringResource(id = R.string.My_Premium), fontSize = 20.sp, fontWeight = FontWeight(600))
+                    Text(text = stringResource(id = R.string.more_recharge) + ",", fontWeight = FontWeight(300))
+                    Text(text = stringResource(id = R.string.more_discounts), fontWeight = FontWeight(300))
                 }
             }
         }
@@ -340,19 +346,19 @@ fun OtherList(navController: NavController, modifier: Modifier = Modifier) {
             .fillMaxWidth()
             .background(Color.White)
     ) {
-        MarkCard(R.drawable.shop, "Shop", handleNavigate = {})
+        MarkCard(R.drawable.shop, R.string.shop, handleNavigate = {})
         Spacer(modifier = Modifier.height(15.dp))
-        MarkCard(R.drawable.wallet_solid, "Wallet", handleNavigate = {})
+        MarkCard(R.drawable.wallet_solid, R.string.wallet, handleNavigate = {})
         Spacer(modifier = Modifier.height(15.dp))
-        MarkCard(R.drawable.event, "Event", handleNavigate = {})
+        MarkCard(R.drawable.event, R.string.event, handleNavigate = {})
         Spacer(modifier = Modifier.height(15.dp))
-        MarkCard(R.drawable.setting, "Setting", handleNavigate = {
+        MarkCard(R.drawable.setting, R.string.settings, handleNavigate = {
             navController.navigate(ScreenView.SettingView("1"))
         })
         Spacer(modifier = Modifier.height(15.dp))
-        MarkCard(R.drawable.help, "Help", handleNavigate = {})
+        MarkCard(R.drawable.help, R.string.help, handleNavigate = {})
         Spacer(modifier = Modifier.height(15.dp))
-        MarkCard(R.drawable.feedback, "Feedback", handleNavigate = {})
+        MarkCard(R.drawable.feedback,  R.string.feedback, handleNavigate = {})
         Spacer(modifier = Modifier.height(15.dp))
         Row(
             modifier = Modifier
@@ -373,7 +379,7 @@ fun OtherList(navController: NavController, modifier: Modifier = Modifier) {
                 modifier = Modifier.size(20.dp)
             )
             Spacer(modifier = Modifier.width(5.dp))
-            Text(text = "Log out", color = Color.Red)
+            Text(text = stringResource(id = R.string.logout), color = Color.Red)
             Spacer(modifier = Modifier.weight(1f))
 
         }
@@ -435,7 +441,7 @@ fun AboutAccount(navController: NavController) {
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
                     Text(
-                        text = "Don't have premium ?",
+                        text = stringResource(id = R.string.Dont_have_premium),
                         fontSize = 15.sp,
                         color = Color(241, 51, 113),
                         fontWeight = FontWeight(600)
@@ -448,7 +454,7 @@ fun AboutAccount(navController: NavController) {
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "BUY", color = Color.White, fontWeight = FontWeight.Bold,
+                            text = stringResource(id = R.string.Buy), color = Color.White, fontWeight = FontWeight.Bold,
                             fontSize = 15.sp
                         )
                     }

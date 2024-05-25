@@ -23,6 +23,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -32,6 +33,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 import com.book.myapplication.GlobalState.UserData
+import com.book.myapplication.R
 import com.book.myapplication.ViewModel.HistoryVM
 import com.book.myapplication.model.History
 import com.book.myapplication.model.User
@@ -59,7 +61,7 @@ fun HistoryView(navController: NavController) {
     ) {
         Row(modifier = Modifier.fillMaxWidth()) {
             Spacer(modifier = Modifier.weight(1f))
-            Text(text = "Your Histories", fontSize = 30.sp)
+            Text(text = stringResource(id = R.string.your_histories), fontSize = 30.sp)
             Spacer(modifier = Modifier.weight(1f))
         }
         Spacer(modifier = Modifier.height(12.dp))
@@ -93,13 +95,13 @@ fun CardHistory(data : History) {
                 .weight(1f)
         ) {
             Text(text = data.book_name, fontSize = 25.sp, fontWeight = FontWeight(600))
-            Text(text = "Reading on chap: ${data.last_read_page}")
+            Text(text = stringResource(id = R.string.reading_on_chap)+": ${data.last_read_page}")
             Row {
                 Button(onClick = { /*TODO*/ }) {
-                    Text(text = "Read")
+                    Text(text = stringResource(id = R.string.read))
                 }
                 Button(onClick = { /*TODO*/ }) {
-                    Text(text = "Continue")
+                    Text(text = stringResource(id = R.string._continue))
                 }
             }
         }

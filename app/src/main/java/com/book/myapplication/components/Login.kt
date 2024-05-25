@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Lock
@@ -37,6 +38,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
@@ -78,7 +80,7 @@ fun LoginForm(navController: NavController, viewModel: UserVM) {
         modifier = Modifier.fillMaxWidth(),
     ) {
         Icon(
-            Icons.Filled.ArrowBack, "backToMain",
+            Icons.AutoMirrored.Filled.ArrowBack, "backToMain",
             modifier = Modifier
                 .padding(start = 10.dp, top = 10.dp)
                 .clickable {
@@ -97,7 +99,7 @@ fun LoginForm(navController: NavController, viewModel: UserVM) {
                 modifier = imageLogoModifier,
             )
             Text(
-                text = "Login to Your Account",
+                text = stringResource(id = R.string.login_to_your_account),
                 fontSize = 27.sp,
                 fontWeight = FontWeight(700)
             )
@@ -123,7 +125,7 @@ fun LoginForm(navController: NavController, viewModel: UserVM) {
                             }
                             .border(2.dp, colUsername)
                             .fillMaxWidth(), label = {
-                            Text("username")
+                            Text(stringResource(id = R.string.username))
                         })
                 }
             }
@@ -152,7 +154,7 @@ fun LoginForm(navController: NavController, viewModel: UserVM) {
                             }
                             .border(2.dp, colPassword)
                             .fillMaxWidth(),
-                        label = { Text("password") },
+                        label = { Text(stringResource(id = R.string.password)) },
                         visualTransformation = VisualTransformation.None
                     )
 
@@ -161,7 +163,6 @@ fun LoginForm(navController: NavController, viewModel: UserVM) {
             Button(
                 onClick = {
                     loginClick = true
-                    Log.i("resultAPI", "onclicked")
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color(8, 185, 65),
@@ -172,15 +173,13 @@ fun LoginForm(navController: NavController, viewModel: UserVM) {
                     .padding(start = 30.dp, end = 30.dp, top = 30.dp)
                     .height(50.dp)
             ) {
-                Text(text = "Login")
+                Text(text = stringResource(id = R.string.login))
             }
             if(loginClick) {
-                Log.i("resultAPI", "onclicked1")
                 LaunchedEffect(loginClick) {
                     try {
                         var data = UserLogin(username, password)
                         val res = userService.login(data)
-                        Log.i("resultAPI", "data = $res")
                         if(res.username != null) {
                             viewModel.setData(res)
                             scope.launch {
@@ -196,12 +195,12 @@ fun LoginForm(navController: NavController, viewModel: UserVM) {
                 }
             }
             Text(
-                text = "Forgot the password ?", color = Color(114, 206, 150),
+                text = stringResource(id = R.string.forgot_the_password)+" ?", color = Color(114, 206, 150),
                 fontWeight = FontWeight(700),
                 modifier = Modifier.padding(top = 10.dp)
             )
             Text(
-                text = "or continue with",
+                text = stringResource(id = R.string.or_continue_with),
                 fontWeight = FontWeight(400),
                 modifier = Modifier.padding(top = 32.dp)
             )
@@ -230,8 +229,8 @@ fun LoginForm(navController: NavController, viewModel: UserVM) {
                 }
             }
             Row(modifier = Modifier.padding(top = 32.dp)) {
-                Text(text = "don't have an account?   ")
-                Text(text = "Register", color = Color.Green, fontWeight = FontWeight(700))
+                Text(text = stringResource(id = R.string.dont_have_account)+"   ")
+                Text(text = stringResource(id = R.string.register), color = Color.Green, fontWeight = FontWeight(700))
             }
 
         }

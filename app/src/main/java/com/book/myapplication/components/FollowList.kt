@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -23,6 +24,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -30,6 +32,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.book.myapplication.R
 import com.book.myapplication.ViewModel.BookVM
 import com.book.myapplication.ViewModel.FavoriteVM
 import com.book.myapplication.api.HandleError
@@ -50,11 +53,11 @@ fun CardStoryFollow(
         ImageFromLocalhostUrl(book, onBookClick)
         Column {
             Text(text = book.book_name, fontSize = 20.sp, fontWeight = FontWeight(600))
-            Text(text = "chapter : ${book.number_of_chapter}")
+            Text(text = stringResource(id = R.string.Chapter) + " : ${book.number_of_chapter}")
             Button(onClick = {
                 favorite_vm.DeleteFromFavorite("${userid}-${book.book_id}")
             }) {
-                Text(text = "Unfollow", color = Color.Red)
+                Text(text = stringResource(id = R.string.Unfollow), color = Color.Red)
             }
         }
     }
@@ -98,7 +101,7 @@ fun FollowList(navController: NavController,idUser: String) {
         modifier = Modifier.fillMaxSize()
     ) {
         Icon(
-            Icons.Filled.ArrowBack, "backToMain",
+            Icons.AutoMirrored.Filled.ArrowBack, "backToMain",
             modifier = Modifier
                 .size(32.dp)
                 .clickable {
@@ -106,7 +109,7 @@ fun FollowList(navController: NavController,idUser: String) {
                 }
         )
         if (isDataLoaded) {
-            Text(text = "Follow List")
+            Text(text = stringResource(id = R.string.Follow_list))
             ListFollow(listFollow, idUser) {book ->
                 navController.navigate("about-book/${book.book_id}")
             }
