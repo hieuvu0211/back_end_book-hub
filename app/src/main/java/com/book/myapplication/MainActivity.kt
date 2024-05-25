@@ -2,10 +2,12 @@ package com.book.myapplication
 
 import LoginForm
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -35,9 +37,10 @@ import com.book.myapplication.components.ScreenView
 import com.book.myapplication.components.Settings.LanguageView
 import com.book.myapplication.components.Settings.SettingView
 import com.book.myapplication.ui.theme.MyappTheme
-import java.util.Locale
+import java.util.Date
 
 class MainActivity : ComponentActivity() {
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -55,18 +58,19 @@ class MainActivity : ComponentActivity() {
 }
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Navigator(context : Context) {
     val context2 = LocalContext.current
     val prefsLanguage = LanguageData(context2)
-    val language_vm : LanguageVM = viewModel(
+    val languageViewmodel : LanguageVM = viewModel(
         factory = viewModelFactory {
             initializer {
                 LanguageVM(prefsLanguage)
             }
         }
     )
-    val locale = language_vm.locale.collectAsState()
+    val locale = languageViewmodel.locale.collectAsState()
     updateLocale(context, locale.value)
     val navController = rememberNavController()
     val dataUserVM: UserVM = viewModel()
@@ -113,6 +117,7 @@ fun Navigator(context : Context) {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun MyThemeLayout(context : Context) {
     Navigator(context)

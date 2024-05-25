@@ -9,7 +9,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -21,25 +20,28 @@ import com.book.myapplication.ViewModel.BookVM
 import com.book.myapplication.model.Book
 
 @Composable
-fun ResultSearch(navController: NavController,name : String?) {
-    val book_vm : BookVM = viewModel()
+fun ResultSearch(navController: NavController, name: String?) {
+    val book_vm: BookVM = viewModel()
     var data = rememberSaveable {
         mutableListOf<Book>()
     }
-    
-    if(name != null) {
-        Column(modifier = Modifier
-            .fillMaxSize()
-            .padding(12.dp)) {
-            Text(text = stringResource(id = R.string.result_for)+": $name")
+
+    if (name != null) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(12.dp)
+        ) {
+            Text(text = stringResource(id = R.string.result_for) + ": $name")
             data = book_vm.loadSearchResult(name)
 
-            LazyVerticalGrid(columns = GridCells.Fixed(2),
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
                 contentPadding = PaddingValues(12.dp)
             ) {
-                items(data) {item ->
-                    StoryCard(book = item) {book ->
-                        navController.navigate("about-book/${item.book_id}")
+                items(data) { item ->
+                    StoryCard(book = item) { book ->
+                        navController.navigate("about-book/${book.book_id}")
                     }
                 }
             }

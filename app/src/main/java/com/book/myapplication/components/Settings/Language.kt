@@ -90,6 +90,7 @@ fun LanguageView(navController: NavController, context : Context) {
             //setting here
             language_vm.updateLocale(Locale("vi"))
             Text(text = "Vietnamese", fontSize = 20.sp)
+
         }
     }
 }

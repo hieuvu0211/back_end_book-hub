@@ -1,6 +1,8 @@
 package com.book.myapplication.components
 
 import android.annotation.SuppressLint
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -26,6 +28,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -45,8 +48,11 @@ import com.book.myapplication.GlobalState.UserData
 import com.book.myapplication.R
 import com.book.myapplication.ViewModel.BookVM
 import com.book.myapplication.ViewModel.FavoriteVM
+import com.book.myapplication.ViewModel.HistoryVM
 import com.book.myapplication.model.Favorite1
+import com.book.myapplication.model.History
 import com.book.myapplication.model.User
+import java.util.Date
 
 
 //@SuppressLint("SuspiciousIndentation")
@@ -82,9 +88,11 @@ fun RenderImage(
 
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ChapterList(navController: NavController,chapterName :String, chapterCount: Int) {
+fun ChapterList(navController: NavController, chapterName:String, chapterCount: Int, data: History) {
     val chapters = (1..chapterCount).map { it }
+    val historyViewModel = viewModel<HistoryVM>()
     // Fixed height for the parent container
     Column(modifier = Modifier.height(400.dp)) {
         // LazyColumn to render the list of chapters
@@ -94,16 +102,30 @@ fun ChapterList(navController: NavController,chapterName :String, chapterCount: 
                 .padding(8.dp)
         ) {
             items(chapters) { chapter ->
-                ChapterItem(navController,chapterName,chapter.toString())
+                data.last_read_page = chapter
+                if(chapter == chapterCount) {
+                    data.status = "Completed"
+                }
+                ChapterItem(navController,chapterName,chapter.toString()) {
+                    historyViewModel.updateHistory(data)
+                }
             }
         }
     }
 }
 
 @Composable
-fun ChapterItem(navController: NavController,chapterName :String,chapterCount: String) {
+fun ChapterItem(
+    navController: NavController,
+    chapterName:String,
+    chapterCount: String,
+    handleUpdateHistory: () -> Unit
+) {
     // Each item in the list is a Text composable
     Box(modifier = Modifier.clickable {
+        //handle post data to backend to update history
+        handleUpdateHistory()
+        //handle navigate to read book
         navController.navigate("read-book/$chapterName/$chapterCount")
     }) {
         Text(
@@ -115,9 +137,9 @@ fun ChapterItem(navController: NavController,chapterName :String,chapterCount: S
         )
     }
 }
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AboutBook(navController: NavController, id : String) {
-
     val context = LocalContext.current
     val dataUserStore = UserData(context)
     val getDataUserFromLocal =
@@ -136,15 +158,23 @@ fun AboutBook(navController: NavController, id : String) {
         mutableStateOf(false)
     }
     var dataFavorite = Favorite1(0,0)
+    val historyDataSend by remember {
+        mutableStateOf(History(0,id.toInt(), data?.book_name ?: "", Date().toString(),0,"Reading"))
+    }
     if(idUser != 0) {
         dataFavorite = Favorite1( idUser, id.toInt())
         favorite_vm.IsFollow(dataFavorite)
+        historyDataSend.user_id = idUser
     }
 
     favorite_vm.isFollowLiveData.observeForever { newValue -> isFollow = newValue }
     val name: String = data?.book_name ?: ""
     val numberOfChapter : Int = data?.number_of_chapter ?: 1
     val numberOfLikes : Int = data?.number_of_likes ?: 1
+
+    //handle History to update history
+
+
     Column(
         modifier = Modifier.fillMaxSize(),
 
@@ -216,7 +246,7 @@ fun AboutBook(navController: NavController, id : String) {
             Text(text = stringResource(id = R.string.Episodes), fontWeight = FontWeight(600))
         }
         Column {
-            ChapterList(navController,name,numberOfChapter)
+            ChapterList(navController,name,numberOfChapter, historyDataSend)
         }
     }
 }

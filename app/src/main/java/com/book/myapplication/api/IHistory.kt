@@ -1,6 +1,5 @@
 package com.book.myapplication.api
 
-import com.book.myapplication.model.Book
 import com.book.myapplication.model.History
 import retrofit2.Response
 import retrofit2.Retrofit
@@ -17,13 +16,13 @@ private val retrofit = Retrofit.Builder()
     .build()
 interface IHistory {
     @GET("getbyuserid/{id}")
-    suspend fun GetHistoryByUserId(@Path("id") id: String): Response<List<History>>
+    suspend fun getHistoryByUserId(@Path("id") id: String): Response<List<History>>
 
     @GET("gettoptenbyuserid/{id}")
-    suspend fun GetTopTenHistoryByUserId(@Path("id") id: String): Response<List<History>>
+    suspend fun getTopTenHistoryByUserId(@Path("id") id: String): Response<List<History>>
 
     @PUT("updateHistory")
-    suspend fun UpdateHistory(@Body() data : History) : Response<Boolean>
+    suspend fun updateHistory(@Body() data : History) : Response<Boolean>
 }
 
 val historyService: IHistory = retrofit.create(IHistory::class.java)

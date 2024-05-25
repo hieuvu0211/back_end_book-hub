@@ -24,7 +24,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.rememberNavController
@@ -32,57 +31,57 @@ import com.book.myapplication.ViewModel.BookVM
 import com.book.myapplication.model.Book
 
 
-@Composable
-fun DesignTheme() {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-
-    ) {
-        Row(modifier = Modifier.fillMaxWidth().height(300.dp)) {
-            RenderImage(imageName = "Attack_on_Titan")
-        }
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 16.dp, end = 16.dp),
-            horizontalArrangement = Arrangement.SpaceAround
-        ) {
-            Column(modifier = Modifier .padding(8.dp)) {
-                Text(text = "58.1K", fontWeight = FontWeight.Bold, fontSize = 24.sp)
-                Text(text = "likes", fontWeight = FontWeight.Light)
-            }
-            Column(modifier = Modifier .padding(8.dp)) {
-                Text(text = "1.87M", fontWeight = FontWeight.Bold, fontSize = 24.sp)
-                Text(text = "follow", fontWeight = FontWeight.Light)
-            }
-            Column(modifier = Modifier .padding(8.dp)) {
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(text = "4.7", fontWeight = FontWeight.Bold, fontSize = 24.sp)
-                    Icon(Icons.Filled.Star, "",
-                        tint = Color.Yellow,
-                        modifier = Modifier.size(16.dp))
-                }
-                Text(text = "likes", fontWeight = FontWeight.Light)
-            }
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 16.dp, end = 16.dp),
-            horizontalArrangement = Arrangement.SpaceAround
-        ) {
-            Text(text = "Episodes", fontWeight = FontWeight(600))
-        }
-        Column {
-            val navController = rememberNavController()
-            ChapterList(navController,"Conan",16)
-        }
-    }
-}
+//@Composable
+//fun DesignTheme() {
+//    Column(
+//        modifier = Modifier.fillMaxSize(),
+//
+//    ) {
+//        Row(modifier = Modifier.fillMaxWidth().height(300.dp)) {
+//            RenderImage(imageName = "Attack_on_Titan")
+//        }
+//
+//        Row(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(start = 16.dp, end = 16.dp),
+//            horizontalArrangement = Arrangement.SpaceAround
+//        ) {
+//            Column(modifier = Modifier .padding(8.dp)) {
+//                Text(text = "58.1K", fontWeight = FontWeight.Bold, fontSize = 24.sp)
+//                Text(text = "likes", fontWeight = FontWeight.Light)
+//            }
+//            Column(modifier = Modifier .padding(8.dp)) {
+//                Text(text = "1.87M", fontWeight = FontWeight.Bold, fontSize = 24.sp)
+//                Text(text = "follow", fontWeight = FontWeight.Light)
+//            }
+//            Column(modifier = Modifier .padding(8.dp)) {
+//                Row(
+//                    horizontalArrangement = Arrangement.Center,
+//                    verticalAlignment = Alignment.CenterVertically
+//                ) {
+//                    Text(text = "4.7", fontWeight = FontWeight.Bold, fontSize = 24.sp)
+//                    Icon(Icons.Filled.Star, "",
+//                        tint = Color.Yellow,
+//                        modifier = Modifier.size(16.dp))
+//                }
+//                Text(text = "likes", fontWeight = FontWeight.Light)
+//            }
+//        }
+//        Row(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(start = 16.dp, end = 16.dp),
+//            horizontalArrangement = Arrangement.SpaceAround
+//        ) {
+//            Text(text = "Episodes", fontWeight = FontWeight(600))
+//        }
+//        Column {
+//            val navController = rememberNavController()
+//            ChapterList(navController,"Conan",16)
+//        }
+//    }
+//}
 
 
 
