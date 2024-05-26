@@ -65,22 +65,22 @@ export class BookService {
   }
 
   //get avatar book by name
-  async getImageBookByName(name: string, @Res() res: Response) {
+  async getImageBookByName(idBook: string, @Res() res: Response) {
     try {
       const imagePath = path.join(
         __dirname,
         '..',
-        `../public/Books/${name}/`,
+        `../public/Books/${idBook}/`,
         `image.png`,
       );
 
-      let imageLinks = `http://localhost:8080/Books/${name}/image.png`;
+      let imageLinks = `http://localhost:8080/Books/${idBook}/image.png`;
 
       const folderPath = path.join(
         __dirname,
         '..',
         `../public/Books/`,
-        `${name}`,
+        `${idBook}`,
       );
       let folderCount: number = 0;
       const items = fs.readdirSync(folderPath);

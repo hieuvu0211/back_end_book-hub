@@ -6,14 +6,18 @@ import { HistoryDTO } from 'src/dto/history.dto';
 export class HistoryController {
     constructor(private historyService: HistoryService) {}
 
-    @Get('/getbyuserid/:id')
-    async getHistoriesByUserId(@Param('id') userId: string) {
+    @Get('/getbyuserid/:idUser')
+    async getHistoriesByUserId(@Param('idUser') userId: string) {
         return await this.historyService.getHistoriesByUserId(userId);
     }
 
-    @Get('/gettoptenbyuserid/:id')
-    async getTopTenHistoriesByUserId(@Param('id') userId: string) {
+    @Get('/gettoptenbyuserid/:idUser')
+    async getTopTenHistoriesByUserId(@Param('idUser') userId: string) {
         return await this.historyService.getTopTenHistoriesByUserId(userId);
+    }
+    @Get('/check/:listId')
+    async checkHistory(@Param('listId') listId: string) {
+        return await this.historyService.checkHistory(listId);
     }
 
     @Put('/updateHistory')

@@ -85,8 +85,29 @@ export class HistoryService {
             throw new Error(error);
         }
     }
-
+    async checkHistory(listId: string) {
+        const userID = listId.split('-')[0];
+        const bookID = listId.split('-')[1];
+        try {
+            const res = await this.prisma.history.findFirst({
+                where: {
+                    AND: [
+                        {user_id: parseInt(userID)},
+                        {book_id: parseInt(bookID)}
+                    ]
+                }
+            });
+            if(res) {
+                return res.last_read_page;
+            }else {
+                return 0;
+            }
+        }catch (error) {
+            throw new Error(error);
+        }
+    }
     async UpdateHistory(data : HistoryDTO) {
+        console.log("data update  = ", data);
         try {
             //check if history exists
             const check = await this.prisma.history.findMany({

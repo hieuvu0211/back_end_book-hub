@@ -26,11 +26,10 @@ export class UserService {
                 }
             });
             if(res) {
+                console.log("login = ", res)
                 return res;
             }
-            else {
-                return {status: 400, message: 'No user found'};
-            }
+            else throw new Error('User not found');
         } catch (error) {
             throw new Error(error);
         }
