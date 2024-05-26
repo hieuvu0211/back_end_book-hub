@@ -79,17 +79,15 @@ fun Navigator(context : Context) {
             LoginForm(navController, dataUserVM)
         }
         composable(route = "main") {
-            MainUi(
-                navController
-            )
+            MainUi(navController)
         }
-        composable(route = "about-book/{id}") { backStackEntry ->
-            backStackEntry.arguments?.getString("id")
+        composable(route = "about-book/{idBook}") { backStackEntry ->
+            backStackEntry.arguments?.getString("idBook")
                 ?.let { AboutBook(navController = navController, it) }
         }
-        composable(route = "read-book/{id}/{chapter}") { backStackEntry ->
-            val id = backStackEntry.arguments?.getString("id") ?: ""
-            val chapter = backStackEntry.arguments?.getString("chapter") ?: ""
+        composable(route = "read-book/{idBook}/{idChapter}") { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("idBook") ?: ""
+            val chapter = backStackEntry.arguments?.getString("idChapter") ?: ""
             ReadBook(id, chapter)
         }
         composable(route = "follow/{id}") { backStackEntry ->

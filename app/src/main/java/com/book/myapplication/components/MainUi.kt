@@ -54,6 +54,7 @@ import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -71,7 +72,7 @@ fun ImageFromLocalhostUrl(
     book: Book,
     onBookClick: (Book) -> Unit,
 ) {
-    val url: String = "http://10.0.2.2:8080/Books/${book.book_name}/image.png"
+    val url: String = "http://10.0.2.2:8080/Books/${book.book_id}/image.png"
     val painter =
         rememberAsyncImagePainter(
             ImageRequest.Builder(LocalContext.current).data(data = url)
@@ -127,7 +128,7 @@ fun StoryCard(
 fun BookList(list_books: List<Book>, book_vm: BookVM, onBookClick: (Book) -> Unit) {
     val sizeListBook = list_books.size / 2
     Column {
-        for (i in 0..sizeListBook - 1 step 3) {
+        for (i in 0..<sizeListBook step 3) {
             Row (
                 modifier = Modifier
                     .fillMaxWidth()
@@ -182,13 +183,13 @@ fun SearchBarSample(navController: NavController) {
 @Composable
 fun MainUi(navController: NavController) {
 //    val res = data.data.value // handle data receive
-    val book_vm = viewModel<BookVM>()
-    val listBooks = (book_vm.LoadListBooks() ?: emptyList()).toMutableList()
+    val bookViewModel = viewModel<BookVM>()
+    val listBooks = (bookViewModel.LoadListBooks()).toMutableList()
     val themeIcons = Modifier.size(100.dp)
     val context = LocalContext.current
     val dataUserStore = UserData(context)
     val getDataUserFromLocal =
-        dataUserStore.getDataUserFromLocal.collectAsState(initial = User(0, "", ""))
+        dataUserStore.getDataUserFromLocal.collectAsStateWithLifecycle(initialValue = User(0, "", ""))
     var idUser by rememberSaveable {
         mutableIntStateOf(0)
     }
@@ -215,7 +216,6 @@ fun MainUi(navController: NavController) {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         IconButton(onClick = {
-                            Log.i("resultAPI", "Home")
                             navController.navigate("main")
                         }) {
                             Icon(
@@ -289,14 +289,14 @@ fun MainUi(navController: NavController) {
             ) {
                 item {
                     Text(text = stringResource(id = R.string.title_topfavorite))
-                    BookListHorizon(book_vm) { book ->
+                    BookListHorizon(bookViewModel) { book ->
                         navController.navigate("about-book/${book.book_id}")
                     }
                     Text(text = stringResource(id = R.string.list_stories))
 //                        BookList(listBooks,book_vm = book_vm) {book ->
 //                            navController.navigate("about-book/${book.book_id}")
 //                        }
-                    BookList(listBooks, book_vm) {book ->
+                    BookList(listBooks, bookViewModel) { book ->
                         navController.navigate("about-book/${book.book_id}")
                     }
 

@@ -9,10 +9,10 @@ import com.book.myapplication.model.History
 import kotlinx.coroutines.launch
 import com.book.myapplication.api.HandleError
 import com.book.myapplication.api.historyService
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import java.time.LocalDateTime
+import kotlinx.coroutines.flow.asStateFlow
 import java.time.format.DateTimeFormatter
-import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 
@@ -26,6 +26,9 @@ class HistoryVM : ViewModel() {
         emptyList()
     )
     val listTopTenHistory :MutableStateFlow<List<History>> = _listTopTenHistory
+
+    private var _lastChapterRead = MutableStateFlow<Int?>(0)
+    val lastChapterRead = _lastChapterRead.asStateFlow()
 
     fun loadListHistory(id : String) {
         viewModelScope.launch {
@@ -72,6 +75,21 @@ class HistoryVM : ViewModel() {
                     Log.i("resultAPI", "update history is success")
                 }
             }catch (e : Exception) {
+                HandleError(e)
+            }
+        }
+    }
+
+    fun checkIsRead(listId : String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val res = historyService.checkIsRead(listId)
+                if(res.isSuccessful) {
+                    res.body()?. let {
+                        _lastChapterRead.value = it
+                    }
+                }
+            }catch(e : Exception) {
                 HandleError(e)
             }
         }

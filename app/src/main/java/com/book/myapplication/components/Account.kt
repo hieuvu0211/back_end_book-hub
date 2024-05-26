@@ -23,10 +23,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -122,7 +122,7 @@ fun ImageHandleHistory(
     book: History,
     onBookClick: (History) -> Unit,
 ) {
-    val url: String = "http://10.0.2.2:8080/Books/${book.book_name}/image.png"
+    val url: String = "http://10.0.2.2:8080/Books/${book.book_id}/image.png"
     val painter =
         rememberAsyncImagePainter(
             ImageRequest.Builder(LocalContext.current).data(data = url)
@@ -233,7 +233,8 @@ fun HistoryViewStory(
                         fontWeight = FontWeight(600),
                     )
                     Spacer(modifier = Modifier.weight(1f))
-                    Icon(Icons.Default.KeyboardArrowRight, "",
+                    Icon(
+                        Icons.AutoMirrored.Filled.KeyboardArrowRight, "",
                         modifier = Modifier
                             .size(35.dp)
                             .clickable {
@@ -251,9 +252,12 @@ fun HistoryViewStory(
                                 navController.navigate("about-book/${item.book_id}")
                             }
                         }
-                        item {
-                            MoreHistoryCard(navController)
+                        if(books.size > 3) {
+                            item {
+                                MoreHistoryCard(navController)
+                            }
                         }
+
                     }
                 }
                 Spacer(modifier = Modifier.height(5.dp))
@@ -397,16 +401,16 @@ fun AboutAccount(navController: NavController) {
         mutableIntStateOf(0)
     }
     idUser = dataUser.value?.user_id ?: 0
-    val history_vm: HistoryVM = viewModel()
-    history_vm.loadTopTenHistory(idUser.toString())
+    val historyViewModel: HistoryVM = viewModel()
+    historyViewModel.loadTopTenHistory(idUser.toString())
 
-    val dataFromHistory by history_vm.listTopTenHistory.collectAsState()
+    val dataFromHistory by historyViewModel.listTopTenHistory.collectAsState()
 
-    val user_vm : UserVM = viewModel()
+    val userViewModel : UserVM = viewModel()
     if(idUser != 0) {
-        user_vm.loadUserInfo(idUser.toString())
+        userViewModel.loadUserInfo(idUser.toString())
     }
-    val username by user_vm.userInfo.collectAsState()
+    val username by userViewModel.userInfo.collectAsState()
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -415,7 +419,7 @@ fun AboutAccount(navController: NavController) {
     ) {
         item {
             Icon(
-                Icons.Filled.ArrowBack, "backToMain",
+                Icons.AutoMirrored.Filled.ArrowBack, "backToMain",
                 modifier = Modifier
                     .size(32.dp)
                     .clickable {
@@ -426,7 +430,7 @@ fun AboutAccount(navController: NavController) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .border(0.1.dp, Color.White)
-                    .background(color = Color.White), username.username.toString() ?: "Guest", 100
+                    .background(color = Color.White), username.username, 100
             )
             Spacer(modifier = Modifier.height(10.dp))
             Box(

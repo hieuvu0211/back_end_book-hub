@@ -1,5 +1,6 @@
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -14,14 +15,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -40,6 +46,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -47,7 +55,9 @@ import androidx.navigation.NavController
 import com.book.myapplication.GlobalState.UserData
 import com.book.myapplication.R
 import com.book.myapplication.ViewModel.UserVM
+import com.book.myapplication.api.HandleError
 import com.book.myapplication.api.userService
+import com.book.myapplication.model.User
 import com.book.myapplication.model.UserLogin
 import kotlinx.coroutines.launch
 
@@ -64,16 +74,17 @@ fun LoginForm(navController: NavController, viewModel: UserVM) {
     var password by rememberSaveable {
         mutableStateOf("")
     }
+    // State to toggle password visibility
+    var passwordVisible by remember { mutableStateOf(false) }
+
+
     var loginClick by rememberSaveable {
         mutableStateOf(false)
     }
-    var onLoginResult by rememberSaveable {
-        mutableStateOf(false)
-    }
+
     val context = LocalContext.current
     val dataUserStore = UserData(context)
     val scope = rememberCoroutineScope()
-
 
 
     Column(
@@ -118,6 +129,7 @@ fun LoginForm(navController: NavController, viewModel: UserVM) {
                     }
                     Icon(Icons.Filled.AccountCircle, "account")
                     TextField(value = username, onValueChange = { username = it },
+                        singleLine = true,
                         modifier = Modifier
 //                            .padding(16.dp)
                             .onFocusChanged {
@@ -146,7 +158,19 @@ fun LoginForm(navController: NavController, viewModel: UserVM) {
                     Icon(Icons.Filled.Lock, "account")
                     TextField(
                         value = password, onValueChange = { password = it },
+                        visualTransformation = if(passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                        trailingIcon = {
+                            val image = if (passwordVisible)
+                                Icons.Filled.Lock
+                            else
+                                Icons.Filled.Edit
 
+                            IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                                Icon(imageVector = image, contentDescription = null)
+                            }
+                        },
+                        singleLine = true,
                         modifier = Modifier
                             .background(Color.White)
                             .onFocusChanged {
@@ -155,7 +179,6 @@ fun LoginForm(navController: NavController, viewModel: UserVM) {
                             .border(2.dp, colPassword)
                             .fillMaxWidth(),
                         label = { Text(stringResource(id = R.string.password)) },
-                        visualTransformation = VisualTransformation.None
                     )
 
                 }
@@ -176,21 +199,31 @@ fun LoginForm(navController: NavController, viewModel: UserVM) {
                 Text(text = stringResource(id = R.string.login))
             }
             if(loginClick) {
-                LaunchedEffect(loginClick) {
+                LaunchedEffect(Unit) {
                     try {
-                        var data = UserLogin(username, password)
+                        val data = UserLogin(username, password)
                         val res = userService.login(data)
-                        if(res.username != null) {
-                            viewModel.setData(res)
+                        if(res.isSuccessful) {
+                            //save data user to ViewModel
+                            viewModel.setData(res.body() as User)
+
+                            //save data user to local
                             scope.launch {
-                                dataUserStore.SetDataUserInLocal(res)
+                                dataUserStore.SetDataUserInLocal(res.body() as User)
                             }
+                            //navigate to main activity
                             navController.navigate("main")
-                        }else {
-                            onLoginResult = true
+                        }else{
+                            //send message to user that login failed
+                            Toast.makeText(context, "Login Failed", Toast.LENGTH_SHORT).show()
+
+                            //handle login click (setup button login can click again)
+                            loginClick = false
                         }
-                    }catch (e: Error) {
-                        Log.i("resultAPI", "$e")
+
+
+                    }catch (e: Exception) {
+                        HandleError(e)
                     }
                 }
             }

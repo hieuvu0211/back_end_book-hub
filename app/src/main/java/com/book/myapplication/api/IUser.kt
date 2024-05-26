@@ -22,7 +22,7 @@ interface IUser {
     suspend fun getUserById(@Path("id") id: String) : Response<User>
 
     @POST("login")
-    suspend fun login(@Body res: UserLogin) : User
+    suspend fun login(@Body res: UserLogin) : Response<User>
 
     @POST("register")
     suspend fun register(@Body res: UserLogin) : UserLogin

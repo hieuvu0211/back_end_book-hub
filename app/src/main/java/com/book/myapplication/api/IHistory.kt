@@ -21,6 +21,9 @@ interface IHistory {
     @GET("gettoptenbyuserid/{id}")
     suspend fun getTopTenHistoryByUserId(@Path("id") id: String): Response<List<History>>
 
+    @GET("check/{listId}")
+    suspend fun checkIsRead(@Path("listId") listId: String): Response<Int>
+
     @PUT("updateHistory")
     suspend fun updateHistory(@Body() data : History) : Response<Boolean>
 }
