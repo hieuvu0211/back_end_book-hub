@@ -270,7 +270,8 @@ fun MainUi(navController: NavController) {
         Column(
             modifier = Modifier
                 .padding(innerPadding)
-                .background(color = Color(245, 245, 245)),
+//                .background(color = Color(245, 245, 245))
+            ,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Row(
@@ -285,7 +286,8 @@ fun MainUi(navController: NavController) {
             LazyColumn(
                 modifier = Modifier
                     .padding(start = 12.dp)
-                    .background(color = Color(245, 245, 245)),
+//                    .background(color = Color(245, 245, 245))
+                ,
             ) {
                 item {
                     Text(text = stringResource(id = R.string.title_topfavorite))

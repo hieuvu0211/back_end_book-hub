@@ -64,7 +64,7 @@ fun ListSettings(navController: NavController) {
             .size(30.dp)
             .padding(horizontal = 8.dp)
             .clickable {
-
+                navController.navigate(ScreenView.DarkModeView)
             },
         verticalAlignment = Alignment.CenterVertically
     ) {

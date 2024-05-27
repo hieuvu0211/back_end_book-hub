@@ -49,4 +49,8 @@
     <string name="english">"Tiếng Anh "</string>
     <string name="view_more">"Xem thêm "</string>
     <string name="result_for">"Kết quả cho "</string>
+    <string name="light_mode">"Chế độ sáng "</string>
+    <string name="follow_system">"Theo hệ thống "</string>
+    <string name="light_mode_is_turn_on">"Đã bật chế độ sáng "</string>
+    <string name="dark_mode_is_turn_on">"Đã bật chế độ tối "</string>
 </resources>

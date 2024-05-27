@@ -13,4 +13,8 @@ sealed class ScreenView {
     data class LanguageView(
         val change : String?
     ) : ScreenView()
+
+    @Serializable
+    data object DarkModeView : ScreenView()
+
 }

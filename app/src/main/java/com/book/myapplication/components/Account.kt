@@ -70,7 +70,7 @@ fun AccountInformation(modifier: Modifier = Modifier, username: String, follow: 
         Box(
             modifier = Modifier
                 .size(100.dp) // Size of the circle (diameter)
-                .background(Color.White, shape = CircleShape)
+                .background(Color.Transparent, shape = CircleShape)
                 .border(1.dp, Color.Green, CircleShape),
             contentAlignment = Alignment.Center
         ) {
@@ -210,7 +210,8 @@ fun MoreHistoryCard(navController: NavController) {
 fun HistoryViewStory(
     modifier: Modifier = Modifier,
     navController: NavController,
-    books: List<History>
+    books: List<History>,
+    idUser : String
 ) {
     Box(
         modifier = modifier
@@ -220,7 +221,7 @@ fun HistoryViewStory(
             modifier = Modifier
                 .fillMaxWidth()
                 .size(300.dp)
-                .background(color = Color.White)
+//                .background(color = Color.White)
         ) {
             Column {
                 Row(
@@ -263,7 +264,9 @@ fun HistoryViewStory(
                 Spacer(modifier = Modifier.height(5.dp))
                 MarkCard(R.drawable.downloadicon, R.string.Downloaded, handleNavigate = {})
                 Spacer(modifier = Modifier.height(15.dp))
-                MarkCard(R.drawable.bookmark, R.string.Favorite_list, handleNavigate = {})
+                MarkCard(R.drawable.bookmark, R.string.Favorite_list, handleNavigate = {
+                    navController.navigate("follow/${idUser}")
+                })
             }
         }
 
@@ -282,7 +285,7 @@ fun StoryAndPremium(modifier: Modifier = Modifier) {
                 .weight(0.5f)
                 .fillMaxHeight()
                 .widthIn(0.dp)
-                .background(Color.White, shape = RoundedCornerShape(20))
+                .background(Color.Transparent, shape = RoundedCornerShape(20))
                 .padding(8.dp)
         ) {
             Row {
@@ -314,7 +317,7 @@ fun StoryAndPremium(modifier: Modifier = Modifier) {
                 .weight(0.5f)
                 .fillMaxHeight()
                 .widthIn(0.dp)
-                .background(Color.White, shape = RoundedCornerShape(20))
+                .background(Color.Transparent, shape = RoundedCornerShape(20))
                 .padding(8.dp)
         ) {
             Row {
@@ -348,7 +351,7 @@ fun OtherList(navController: NavController, modifier: Modifier = Modifier) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.White)
+//            .background(Color.White)
     ) {
         MarkCard(R.drawable.shop, R.string.shop, handleNavigate = {})
         Spacer(modifier = Modifier.height(15.dp))
@@ -415,7 +418,7 @@ fun AboutAccount(navController: NavController) {
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
-            .background(color = Color(245, 245, 245))
+//            .background(color = Color(245, 245, 245))
     ) {
         item {
             Icon(
@@ -430,14 +433,16 @@ fun AboutAccount(navController: NavController) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .border(0.1.dp, Color.White)
-                    .background(color = Color.White), username.username, 100
+//                    .background(color = Color.White)
+                , username.username, 100
             )
             Spacer(modifier = Modifier.height(10.dp))
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(55.dp)
-                    .background(color = Color(245, 221, 234), shape = RoundedCornerShape(10)),
+//                    .background(color = Color(245, 221, 234), shape = RoundedCornerShape(10))
+                    ,
                 contentAlignment = Alignment.Center
             ) {
                 Row(
@@ -465,7 +470,7 @@ fun AboutAccount(navController: NavController) {
                 }
             }
             Spacer(modifier = Modifier.height(10.dp))
-            HistoryViewStory(modifier = Modifier.fillMaxWidth(), navController, dataFromHistory)
+            HistoryViewStory(modifier = Modifier.fillMaxWidth(), navController, dataFromHistory, idUser.toString())
             Spacer(modifier = Modifier.height(10.dp))
             StoryAndPremium()
             Spacer(modifier = Modifier.height(10.dp))
