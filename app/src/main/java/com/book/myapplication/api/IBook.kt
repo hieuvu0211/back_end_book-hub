@@ -21,7 +21,7 @@ private val retrofit = Retrofit.Builder()
 
 interface IBook {
     @GET("getall")
-    suspend fun getAllBooks(): List<Book>
+    suspend fun getAllBooks(): Response<List<Book>>
 
     @GET("getbyid/{id}")
     suspend fun getBookById(@Path("id") id: String): Response<Book>

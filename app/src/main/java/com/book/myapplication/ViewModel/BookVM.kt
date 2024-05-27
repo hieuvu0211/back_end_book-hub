@@ -10,15 +10,18 @@ import com.book.myapplication.api.ImageListResponse
 import com.book.myapplication.api.bookService
 import com.book.myapplication.model.Book
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 class BookVM : ViewModel() {
     //create viewModel store data from back-end
-    private val bookLists: MutableList<Book> = mutableListOf<Book>()
+    private val _bookList = MutableStateFlow<List<Book>>(emptyList())
+    val bookLists = _bookList.asStateFlow()
 
     private var _bookData = mutableStateOf<Book?>(null)
-    val book_data : State<Book?> = _bookData
+    val bookData : State<Book?> = _bookData
 
 
     private var _listLinks = mutableStateOf<ImageListResponse?>(null)
@@ -30,19 +33,17 @@ class BookVM : ViewModel() {
     private var _listTop10Book : MutableList<Book> = mutableListOf<Book>()
     val listTop10Book : MutableList<Book> = _listTop10Book
 
-    fun LoadListBooks(): MutableList<Book> {
-        try {
-            val result = runBlocking(Dispatchers.IO) {
-                bookService.getAllBooks()
+    fun loadListBooks() {
+        viewModelScope.launch {
+            try {
+                val res = bookService.getAllBooks()
+                if(res.isSuccessful) {
+                    _bookList.value = res.body() as MutableList<Book>
+                }
+            }catch (e : Exception) {
+                HandleError(e)
             }
-            for (item in result) {
-                bookLists.add(item)
-            }
-            return bookLists
-        } catch (e: Exception) {
-            HandleError(e)
         }
-        return bookLists
     }
 
     fun loadBookById(id : String) {

@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,18 +12,19 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -36,7 +36,7 @@ import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -54,6 +54,7 @@ import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -101,10 +102,6 @@ fun StoryCard(
     Column(
         modifier = Modifier
             .padding(8.dp)
-//            .clip(MaterialTheme.shapes.medium)
-//            .background(MaterialTheme.colorScheme.surface)
-
-//            .padding(8.dp)
     ) {
         ImageFromLocalhostUrl(book, onBookClick)
         Spacer(modifier = Modifier.height(8.dp))
@@ -125,31 +122,75 @@ fun StoryCard(
 
 //render List Book data
 @Composable
-fun BookList(list_books: List<Book>, book_vm: BookVM, onBookClick: (Book) -> Unit) {
-    val sizeListBook = list_books.size / 2
-    Column {
-        for (i in 0..<sizeListBook step 3) {
-            Row (
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .size(200.dp)
-            ) {
-                for (j in i..i + 3) {
-                    if(j <= sizeListBook) {
-                        StoryCard(list_books[j], onBookClick)
+fun BookList(listBooks: List<Book>, onBookClick: (Book) -> Unit) {
+    if (listBooks.isNotEmpty()) {
+        val sizeListBook = listBooks.size - 1
+        Column {
+            for (i in 0..<sizeListBook step 3) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .size(200.dp)
+                ) {
+                    for (j in i..i + 3) {
+                        if (j <= sizeListBook) {
+                            StoryCard(listBooks[j], onBookClick)
+                        }
                     }
                 }
             }
         }
     }
+
+}
+
+fun handleResultSearch(textToSearch: String, listBooks: List<Book>): MutableList<Book> {
+    val resultSearch = mutableListOf<Book>()
+    if(textToSearch.isNotEmpty() && textToSearch != " ") {
+        for (book in listBooks) {
+            if (book.book_name.contains(textToSearch, ignoreCase = true)) {
+                resultSearch.add(book)
+            }
+        }
+    }
+
+    return resultSearch
+}
+
+@Composable
+fun ListBookResult(text : String, listBooks: List<Book>,navController: NavController) {
+    val listItem = handleResultSearch(text, listBooks)
+    LazyColumn(modifier = Modifier
+        .fillMaxSize()
+        .padding(8.dp)) {
+        items(listItem) {item ->
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp)) {
+                ImageFromLocalhostUrl(item) {
+                    navController.navigate("about-book/${it.book_id}")
+                }
+                Column {
+                    Text(text = item.book_name, fontSize = 20.sp)
+                    Text(text = stringResource(id = R.string.Chapter) + ": ${item.number_of_chapter}")
+                    Text(text = stringResource(id = R.string.like2) + ": ${item.number_of_likes}")
+                }
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchBarSample(navController: NavController) {
+fun SearchBarSample(navController: NavController, listBooks: List<Book>) {
     var text by rememberSaveable { mutableStateOf("") }
     var active by rememberSaveable { mutableStateOf(false) }
 
+    var resultSearch = rememberSaveable() {
+        mutableListOf<Book>()
+    }
     Box(
         Modifier
             .fillMaxWidth()
@@ -159,7 +200,9 @@ fun SearchBarSample(navController: NavController) {
                 .align(Alignment.TopCenter)
                 .semantics { traversalIndex = -1f },
             query = text,
-            onQueryChange = { text = it },
+            onQueryChange = {
+                text = it
+            },
             onSearch = {
                 active = false
                 if (text != "") {
@@ -172,8 +215,10 @@ fun SearchBarSample(navController: NavController) {
             },
             placeholder = { Text(text = stringResource(id = R.string.search_placeholder)) },
             leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-            trailingIcon = { Icon(Icons.Default.MoreVert, contentDescription = null) },
-        ) {}
+//            trailingIcon = { Icon(Icons.Default.MoreVert, contentDescription = null) },
+        ) {
+            ListBookResult(text, listBooks, navController)
+        }
 
     }
 }
@@ -184,12 +229,21 @@ fun SearchBarSample(navController: NavController) {
 fun MainUi(navController: NavController) {
 //    val res = data.data.value // handle data receive
     val bookViewModel = viewModel<BookVM>()
-    val listBooks = (bookViewModel.LoadListBooks()).toMutableList()
+    LaunchedEffect(Unit) {
+        bookViewModel.loadListBooks()
+    }
+    val listBooks by bookViewModel.bookLists.collectAsStateWithLifecycle()
     val themeIcons = Modifier.size(100.dp)
     val context = LocalContext.current
     val dataUserStore = UserData(context)
     val getDataUserFromLocal =
-        dataUserStore.getDataUserFromLocal.collectAsStateWithLifecycle(initialValue = User(0, "", ""))
+        dataUserStore.getDataUserFromLocal.collectAsStateWithLifecycle(
+            initialValue = User(
+                0,
+                "",
+                ""
+            )
+        )
     var idUser by rememberSaveable {
         mutableIntStateOf(0)
     }
@@ -280,14 +334,13 @@ fun MainUi(navController: NavController) {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                SearchBarSample(navController)
+                SearchBarSample(navController, listBooks)
             }
             Spacer(modifier = Modifier.height(16.dp))
             LazyColumn(
                 modifier = Modifier
-                    .padding(start = 12.dp)
+                    .padding(start = 12.dp),
 //                    .background(color = Color(245, 245, 245))
-                ,
             ) {
                 item {
                     Text(text = stringResource(id = R.string.title_topfavorite))
@@ -295,10 +348,7 @@ fun MainUi(navController: NavController) {
                         navController.navigate("about-book/${book.book_id}")
                     }
                     Text(text = stringResource(id = R.string.list_stories))
-//                        BookList(listBooks,book_vm = book_vm) {book ->
-//                            navController.navigate("about-book/${book.book_id}")
-//                        }
-                    BookList(listBooks, bookViewModel) { book ->
+                    BookList(listBooks) { book ->
                         navController.navigate("about-book/${book.book_id}")
                     }
 

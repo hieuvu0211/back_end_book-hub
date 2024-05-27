@@ -150,7 +150,7 @@ fun AboutBook(navController: NavController, bookId : String) {
     val bookViewModel : BookVM = viewModel()
     val favoriteViewModel : FavoriteVM = viewModel()
     val historyViewModel = viewModel<HistoryVM>()
-    val data by bookViewModel.book_data
+    val data by bookViewModel.bookData
     LaunchedEffect(Unit) {
         bookViewModel.loadBookById(bookId)
 
