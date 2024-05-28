@@ -53,6 +53,8 @@ fun HistoryView(navController: NavController) {
             initialValue = User(
                 0,
                 "",
+                "",
+                "",
                 ""
             )
         )

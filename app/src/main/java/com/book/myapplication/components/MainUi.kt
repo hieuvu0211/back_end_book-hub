@@ -1,6 +1,7 @@
 package com.book.myapplication.components
 
 import android.annotation.SuppressLint
+import android.content.res.Configuration
 import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -40,12 +41,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.isTraversalGroup
@@ -82,7 +85,6 @@ fun ImageFromLocalhostUrl(
                 }).build()
         )
     Box(modifier = Modifier
-//        .fillMaxWidth()
         .clickable { onBookClick(book) }) {
         Image(
             painter = painter,
@@ -105,7 +107,6 @@ fun StoryCard(
     ) {
         ImageFromLocalhostUrl(book, onBookClick)
         Spacer(modifier = Modifier.height(8.dp))
-
         Text(
             text = if (book.book_name.length > 10) {
                 "${book.book_name.take(10)}..."
@@ -116,37 +117,41 @@ fun StoryCard(
             maxLines = 2,
             overflow = TextOverflow.Ellipsis
         )
-
     }
 }
 
 //render List Book data
 @Composable
 fun BookList(listBooks: List<Book>, onBookClick: (Book) -> Unit) {
+    //handle if user rotate screen => change number of column
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    val columns = if (isLandscape) 6 else 3
     if (listBooks.isNotEmpty()) {
         val sizeListBook = listBooks.size - 1
-        Column {
-            for (i in 0..<sizeListBook step 3) {
+        Column(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            for (i in 0 until sizeListBook step columns) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .size(200.dp)
                 ) {
-                    for (j in i..i + 3) {
-                        if (j <= sizeListBook) {
-                            StoryCard(listBooks[j], onBookClick)
-                        }
+                    Spacer(modifier = Modifier.weight(1f))
+                    for (j in i until minOf(i + columns, sizeListBook + 1)) {
+                        StoryCard(listBooks[j], onBookClick)
                     }
+                    Spacer(modifier = Modifier.weight(1f))
                 }
             }
         }
     }
-
 }
 
 fun handleResultSearch(textToSearch: String, listBooks: List<Book>): MutableList<Book> {
     val resultSearch = mutableListOf<Book>()
-    if(textToSearch.isNotEmpty() && textToSearch != " ") {
+    if (textToSearch.isNotEmpty() && textToSearch != " ") {
         for (book in listBooks) {
             if (book.book_name.contains(textToSearch, ignoreCase = true)) {
                 resultSearch.add(book)
@@ -157,16 +162,21 @@ fun handleResultSearch(textToSearch: String, listBooks: List<Book>): MutableList
     return resultSearch
 }
 
+@SuppressLint("MutableCollectionMutableState")
 @Composable
-fun ListBookResult(text : String, listBooks: List<Book>,navController: NavController) {
-    val listItem = handleResultSearch(text, listBooks)
-    LazyColumn(modifier = Modifier
-        .fillMaxSize()
-        .padding(8.dp)) {
-        items(listItem) {item ->
-            Row(modifier = Modifier
-                .fillMaxWidth()
-                .height(100.dp)) {
+fun ListBookResult(text: String, listBooks: List<Book>, navController: NavController) {
+    val listItem by remember(text) { mutableStateOf(handleResultSearch(text, listBooks)) }
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(8.dp)
+    ) {
+        items(listItem) { item ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(120.dp)
+            ) {
                 ImageFromLocalhostUrl(item) {
                     navController.navigate("about-book/${it.book_id}")
                 }
@@ -187,10 +197,6 @@ fun ListBookResult(text : String, listBooks: List<Book>,navController: NavContro
 fun SearchBarSample(navController: NavController, listBooks: List<Book>) {
     var text by rememberSaveable { mutableStateOf("") }
     var active by rememberSaveable { mutableStateOf(false) }
-
-    var resultSearch = rememberSaveable() {
-        mutableListOf<Book>()
-    }
     Box(
         Modifier
             .fillMaxWidth()
@@ -215,7 +221,6 @@ fun SearchBarSample(navController: NavController, listBooks: List<Book>) {
             },
             placeholder = { Text(text = stringResource(id = R.string.search_placeholder)) },
             leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-//            trailingIcon = { Icon(Icons.Default.MoreVert, contentDescription = null) },
         ) {
             ListBookResult(text, listBooks, navController)
         }
@@ -227,7 +232,6 @@ fun SearchBarSample(navController: NavController, listBooks: List<Book>) {
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MainUi(navController: NavController) {
-//    val res = data.data.value // handle data receive
     val bookViewModel = viewModel<BookVM>()
     LaunchedEffect(Unit) {
         bookViewModel.loadListBooks()
@@ -241,14 +245,17 @@ fun MainUi(navController: NavController) {
             initialValue = User(
                 0,
                 "",
+                "",
+                "",
                 ""
             )
         )
+
     var idUser by rememberSaveable {
         mutableIntStateOf(0)
     }
     idUser = getDataUserFromLocal.value?.user_id ?: 0
-
+    Log.i("resultAPI", "idUser: ${getDataUserFromLocal.value}")
     Scaffold(
         bottomBar = {
             BottomAppBar(
@@ -291,7 +298,7 @@ fun MainUi(navController: NavController) {
                             )
                         }
                         IconButton(onClick = {
-                            Log.i("resultAPI", "Search")
+                            navController.navigate("auth-login")
                         }) {
                             Icon(
                                 Icons.Default.Search,

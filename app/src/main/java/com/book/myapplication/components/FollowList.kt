@@ -11,7 +11,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -46,7 +45,7 @@ fun CardStoryFollow(
     userid: String,
     modifier: Modifier = Modifier
 ) {
-    val favorite_vm : FavoriteVM = viewModel()
+    val favoriteViewModel : FavoriteVM = viewModel()
     Row(
 
     ) {
@@ -55,7 +54,7 @@ fun CardStoryFollow(
             Text(text = book.book_name, fontSize = 20.sp, fontWeight = FontWeight(600))
             Text(text = stringResource(id = R.string.Chapter) + " : ${book.number_of_chapter}")
             Button(onClick = {
-                favorite_vm.DeleteFromFavorite("${userid}-${book.book_id}")
+                favoriteViewModel.DeleteFromFavorite("${userid}-${book.book_id}")
             }) {
                 Text(text = stringResource(id = R.string.Unfollow), color = Color.Red)
             }

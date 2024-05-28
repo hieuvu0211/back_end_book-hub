@@ -4,9 +4,9 @@ import LoginForm
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -16,6 +16,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -29,6 +30,7 @@ import androidx.navigation.toRoute
 import com.book.myapplication.GlobalState.DarkModeData
 import com.book.myapplication.GlobalState.LanguageData
 import com.book.myapplication.LocalSettings.updateLocale
+import com.book.myapplication.ViewModel.AuthVM
 import com.book.myapplication.ViewModel.DarkModeVM
 import com.book.myapplication.ViewModel.LanguageVM
 import com.book.myapplication.ViewModel.UserVM
@@ -36,6 +38,7 @@ import com.book.myapplication.components.AboutAccount
 import com.book.myapplication.components.AboutBook
 import com.book.myapplication.components.FollowList
 import com.book.myapplication.components.HistoryView
+import com.book.myapplication.components.LoginAuth
 import com.book.myapplication.components.MainUi
 import com.book.myapplication.components.ReadBook
 import com.book.myapplication.components.ResultSearch
@@ -44,16 +47,41 @@ import com.book.myapplication.components.Settings.DarkModeView
 import com.book.myapplication.components.Settings.LanguageView
 import com.book.myapplication.components.Settings.SettingView
 import com.book.myapplication.ui.theme.MyappTheme
-import java.util.Date
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 
 class MainActivity : ComponentActivity() {
+
+    private lateinit var googleSignInClient: GoogleSignInClient
+    private val viewModel: AuthVM by viewModels()
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(getString(R.string.web_client_id))
+            .requestEmail()
+            .build()
 
+        googleSignInClient = GoogleSignIn.getClient(this, gso)
+
+        val signInLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+            viewModel.handleSignInResult(task)
+        }
+
+        viewModel.signInIntent.observe(this) { intent ->
+            intent?.let {
+                signInLauncher.launch(it)
+                viewModel.onSignInIntentHandled()
+            }
+        }
         setContent {
             //handle get data if user set isDarkTheme
             val prefsDarkMode = DarkModeData(this)
+
             //create viewModel for change theme to Dark Mode
             val darkThemeViewModel = viewModel<DarkModeVM>(
                 factory = viewModelFactory {
@@ -71,7 +99,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MyThemeLayout(context = this, darkThemeViewModel = darkThemeViewModel)
+                    MyThemeLayout(context = this, darkThemeViewModel = darkThemeViewModel, viewModel)
                 }
             }
         }
@@ -81,13 +109,16 @@ class MainActivity : ComponentActivity() {
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun Navigator(context : Context, darkThemeViewModel : DarkModeVM) {
+fun Navigator(context : Context, darkThemeViewModel : DarkModeVM, authViewModel : AuthVM) {
 
     val navController = rememberNavController()
     val dataUserVM: UserVM = viewModel()
+    val coroutineScope = rememberCoroutineScope()
+
     NavHost(navController = navController, startDestination = "main") {
         composable(route = "login") {
-            LoginForm(navController, dataUserVM)
+
+            LoginForm(navController, dataUserVM, authViewModel)
         }
         composable(route = "main") {
             MainUi(navController)
@@ -110,7 +141,7 @@ fun Navigator(context : Context, darkThemeViewModel : DarkModeVM) {
             ResultSearch(navController, name = name)
         }
         composable(route = "account") { backStackEntry ->
-            AboutAccount(navController)
+            AboutAccount(navController, authViewModel)
         }
         composable(route = "history") { backStackEntry ->
             HistoryView(navController)
@@ -126,12 +157,15 @@ fun Navigator(context : Context, darkThemeViewModel : DarkModeVM) {
         composable<ScreenView.DarkModeView>{
             DarkModeView(navController = navController, darkThemeViewModel = darkThemeViewModel)
         }
+        composable(route = "auth-login") {
+            LoginAuth(authViewModel = authViewModel)
+        }
     }
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun MyThemeLayout(context : Context, darkThemeViewModel : DarkModeVM) {
+fun MyThemeLayout(context : Context, darkThemeViewModel : DarkModeVM, authViewModel : AuthVM) {
 
     //update language
     val context2 = LocalContext.current
@@ -153,5 +187,5 @@ fun MyThemeLayout(context : Context, darkThemeViewModel : DarkModeVM) {
         darkThemeViewModel.changeDarkTheme(isSystemDarkTheme)
     }
 
-    Navigator(context, darkThemeViewModel)
+    Navigator(context, darkThemeViewModel, authViewModel)
 }

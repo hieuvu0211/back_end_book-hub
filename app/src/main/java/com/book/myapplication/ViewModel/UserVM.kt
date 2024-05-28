@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 
 class UserVM : ViewModel() {
     val data: MutableStateFlow<User?> = MutableStateFlow(null)
-    private var _userInfo: MutableStateFlow<User> = MutableStateFlow(User(0,"",""))
+    private var _userInfo: MutableStateFlow<User> = MutableStateFlow(User(0,"","","",""))
     val userInfo: StateFlow<User> = _userInfo
 
     fun setData(data: User) {

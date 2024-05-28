@@ -25,7 +25,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -56,6 +55,7 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.book.myapplication.GlobalState.UserData
 import com.book.myapplication.R
+import com.book.myapplication.ViewModel.AuthVM
 import com.book.myapplication.ViewModel.HistoryVM
 import com.book.myapplication.ViewModel.UserVM
 import com.book.myapplication.model.History
@@ -63,7 +63,7 @@ import com.book.myapplication.model.User
 import kotlinx.coroutines.launch
 
 @Composable
-fun AccountInformation(modifier: Modifier = Modifier, username: String, follow: Int) {
+fun AccountInformation(modifier: Modifier = Modifier, username: String, follow: Int, image: String?) {
     Row(
         modifier = modifier,
     ) {
@@ -75,7 +75,23 @@ fun AccountInformation(modifier: Modifier = Modifier, username: String, follow: 
             contentAlignment = Alignment.Center
         ) {
             //image here
-            Text(text = "aBCDE")
+            if(image != "") {
+                val painter = rememberAsyncImagePainter(
+                    ImageRequest.Builder(LocalContext.current)
+                        .data(data = image)
+                        .apply {
+                            // You can customize image loading parameters here
+                        }
+                        .build()
+                )
+                Image(
+                    painter = painter,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(90.dp)
+                        .clip(CircleShape)
+                )
+            }
         }
         Spacer(modifier = Modifier.width(20.dp))
         Column(
@@ -88,13 +104,13 @@ fun AccountInformation(modifier: Modifier = Modifier, username: String, follow: 
                 Text(text = "$follow")
                 Text(text = stringResource(id = R.string.Follows))
             }
-            
+
         }
     }
 }
 
 @Composable
-fun MarkCard(iconResource: Int, content: Int, handleNavigate : () -> Unit) {
+fun MarkCard(iconResource: Int, content: Int, handleNavigate: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -200,7 +216,11 @@ fun MoreHistoryCard(navController: NavController) {
                 )
             }
             Spacer(modifier = Modifier.height(10.dp))
-            Text(text = stringResource(id = R.string.view_more), color = Color.White, fontWeight = FontWeight(600))
+            Text(
+                text = stringResource(id = R.string.view_more),
+                color = Color.White,
+                fontWeight = FontWeight(600)
+            )
         }
     }
 }
@@ -211,7 +231,7 @@ fun HistoryViewStory(
     modifier: Modifier = Modifier,
     navController: NavController,
     books: List<History>,
-    idUser : String
+    idUser: String
 ) {
     Box(
         modifier = modifier
@@ -253,7 +273,7 @@ fun HistoryViewStory(
                                 navController.navigate("about-book/${item.book_id}")
                             }
                         }
-                        if(books.size > 3) {
+                        if (books.size > 3) {
                             item {
                                 MoreHistoryCard(navController)
                             }
@@ -302,8 +322,15 @@ fun StoryAndPremium(modifier: Modifier = Modifier) {
                 }
                 Spacer(modifier = Modifier.width(10.dp))
                 Column {
-                    Text(text = stringResource(id = R.string.Post_stories), fontSize = 20.sp, fontWeight = FontWeight(600))
-                    Text(text = stringResource(id = R.string.Post_your_favorite_stories), fontWeight = FontWeight(300))
+                    Text(
+                        text = stringResource(id = R.string.Post_stories),
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight(600)
+                    )
+                    Text(
+                        text = stringResource(id = R.string.Post_your_favorite_stories),
+                        fontWeight = FontWeight(300)
+                    )
                 }
             }
         }
@@ -334,9 +361,19 @@ fun StoryAndPremium(modifier: Modifier = Modifier) {
 
                 Spacer(modifier = Modifier.weight(1f))
                 Column {
-                    Text(text = stringResource(id = R.string.My_Premium), fontSize = 20.sp, fontWeight = FontWeight(600))
-                    Text(text = stringResource(id = R.string.more_recharge) + ",", fontWeight = FontWeight(300))
-                    Text(text = stringResource(id = R.string.more_discounts), fontWeight = FontWeight(300))
+                    Text(
+                        text = stringResource(id = R.string.My_Premium),
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight(600)
+                    )
+                    Text(
+                        text = stringResource(id = R.string.more_recharge) + ",",
+                        fontWeight = FontWeight(300)
+                    )
+                    Text(
+                        text = stringResource(id = R.string.more_discounts),
+                        fontWeight = FontWeight(300)
+                    )
                 }
             }
         }
@@ -344,7 +381,7 @@ fun StoryAndPremium(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun OtherList(navController: NavController, modifier: Modifier = Modifier) {
+fun OtherList(navController: NavController, authViewModel: AuthVM) {
     val context = LocalContext.current
     val dataUserStore = UserData(context)
     val scope = rememberCoroutineScope()
@@ -365,18 +402,21 @@ fun OtherList(navController: NavController, modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(15.dp))
         MarkCard(R.drawable.help, R.string.help, handleNavigate = {})
         Spacer(modifier = Modifier.height(15.dp))
-        MarkCard(R.drawable.feedback,  R.string.feedback, handleNavigate = {})
+        MarkCard(R.drawable.feedback, R.string.feedback, handleNavigate = {})
         Spacer(modifier = Modifier.height(15.dp))
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .size(30.dp)
-                .clickable {
-                    scope.launch {
-                        dataUserStore.SetDataUserInLocal(null)
-                        navController.navigate("main")
+                .clickable(
+                    onClick = {
+                        scope.launch {
+                            dataUserStore.setDataUserInLocal(null)
+                            authViewModel.signOut()
+                            navController.navigate("main")
+                        }
                     }
-                },
+                ),
             verticalAlignment = Alignment.CenterVertically
         ) {
 
@@ -394,12 +434,12 @@ fun OtherList(navController: NavController, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun AboutAccount(navController: NavController) {
+fun AboutAccount(navController: NavController, authViewModel: AuthVM) {
 
     val context = LocalContext.current
     val dataUserStore = UserData(context)
     val dataUser =
-        dataUserStore.getDataUserFromLocal.collectAsState(initial = User(0, "", ""))
+        dataUserStore.getDataUserFromLocal.collectAsState(initial = User(0, "", "", "", ""))
     var idUser by rememberSaveable {
         mutableIntStateOf(0)
     }
@@ -409,11 +449,11 @@ fun AboutAccount(navController: NavController) {
 
     val dataFromHistory by historyViewModel.listTopTenHistory.collectAsState()
 
-    val userViewModel : UserVM = viewModel()
-    if(idUser != 0) {
+    val userViewModel: UserVM = viewModel()
+    if (idUser != 0) {
         userViewModel.loadUserInfo(idUser.toString())
     }
-    val username by userViewModel.userInfo.collectAsState()
+    val username = dataUser.value?.username ?: "unknown"
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -434,7 +474,7 @@ fun AboutAccount(navController: NavController) {
                     .fillMaxWidth()
                     .border(0.1.dp, Color.White)
 //                    .background(color = Color.White)
-                , username.username, 100
+                , username, 100, dataUser.value?.imgurl ?: ""
             )
             Spacer(modifier = Modifier.height(10.dp))
             Box(
@@ -442,7 +482,7 @@ fun AboutAccount(navController: NavController) {
                     .fillMaxWidth()
                     .height(55.dp)
 //                    .background(color = Color(245, 221, 234), shape = RoundedCornerShape(10))
-                    ,
+                ,
                 contentAlignment = Alignment.Center
             ) {
                 Row(
@@ -463,18 +503,25 @@ fun AboutAccount(navController: NavController) {
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = stringResource(id = R.string.Buy), color = Color.White, fontWeight = FontWeight.Bold,
+                            text = stringResource(id = R.string.Buy),
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
                             fontSize = 15.sp
                         )
                     }
                 }
             }
             Spacer(modifier = Modifier.height(10.dp))
-            HistoryViewStory(modifier = Modifier.fillMaxWidth(), navController, dataFromHistory, idUser.toString())
+            HistoryViewStory(
+                modifier = Modifier.fillMaxWidth(),
+                navController,
+                dataFromHistory,
+                idUser.toString()
+            )
             Spacer(modifier = Modifier.height(10.dp))
             StoryAndPremium()
             Spacer(modifier = Modifier.height(10.dp))
-            OtherList(navController)
+            OtherList(navController, authViewModel)
         }
     }
 }
@@ -484,7 +531,8 @@ fun AboutAccount(navController: NavController) {
 @Composable
 fun AboutAccountPreView(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
-    AboutAccount(navController)
+    val authViewModel: AuthVM = viewModel()
+    AboutAccount(navController, authViewModel)
 }
 
 

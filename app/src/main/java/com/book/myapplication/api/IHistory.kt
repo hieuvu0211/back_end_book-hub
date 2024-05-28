@@ -10,7 +10,7 @@ import retrofit2.http.PUT
 import retrofit2.http.Path
 
 private const val BASE_URL = "http://10.0.2.2:8080/history/"
-private val retrofit = Retrofit.Builder()
+private val retrofitHistory = Retrofit.Builder()
     .baseUrl(BASE_URL)
     .addConverterFactory(GsonConverterFactory.create())
     .build()
@@ -28,4 +28,4 @@ interface IHistory {
     suspend fun updateHistory(@Body() data : History) : Response<Boolean>
 }
 
-val historyService: IHistory = retrofit.create(IHistory::class.java)
+val historyService: IHistory = retrofitHistory.create(IHistory::class.java)

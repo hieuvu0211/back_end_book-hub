@@ -59,7 +59,7 @@ import java.util.Date
 @SuppressLint("SuspiciousIndentation")
 @Composable
 fun RenderImage(
-    idBook :String
+    idBook: String
 ) {
     val url = "http://10.0.2.2:8080/Books/${idBook}/image.png"
     val painter =
@@ -69,26 +69,26 @@ fun RenderImage(
                     // You can customize image loading parameters here
                 }).build()
         )
-        Box(modifier = Modifier
+    Box(
+        modifier = Modifier
             .fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(text = "Back")
-            Image(
-                painter = painter,
-                contentDescription = null,
-                modifier = Modifier
-                    .fillMaxSize()
-                    ,
-                contentScale = ContentScale.FillBounds
-            )
-        }
+        contentAlignment = Alignment.Center
+    ) {
+        Text(text = "Back")
+        Image(
+            painter = painter,
+            contentDescription = null,
+            modifier = Modifier
+                .fillMaxSize(),
+            contentScale = ContentScale.FillBounds
+        )
+    }
 
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ChapterList(navController: NavController, idBook:String, chapterCount: Int, data: History) {
+fun ChapterList(navController: NavController, idBook: String, chapterCount: Int, data: History) {
     val chapters = (1..chapterCount).map { it }
     val historyViewModel = viewModel<HistoryVM>()
     // Fixed height for the parent container
@@ -100,10 +100,10 @@ fun ChapterList(navController: NavController, idBook:String, chapterCount: Int, 
                 .padding(8.dp)
         ) {
             items(chapters) { chapter ->
-                ChapterItem(navController,idBook,chapter.toString()) {
-                    if(chapter == chapterCount) {
+                ChapterItem(navController, idBook, chapter.toString()) {
+                    if (chapter == chapterCount) {
                         data.status = "Completed"
-                    }else{
+                    } else {
                         data.status = "Reading"
                     }
                     data.last_read_page = chapter
@@ -117,7 +117,7 @@ fun ChapterList(navController: NavController, idBook:String, chapterCount: Int, 
 @Composable
 fun ChapterItem(
     navController: NavController,
-    idBook:String,
+    idBook: String,
     chapterCount: String,
     handleUpdateHistory: () -> Unit
 ) {
@@ -136,19 +136,25 @@ fun ChapterItem(
         )
     }
 }
+
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun AboutBook(navController: NavController, bookId : String) {
+fun AboutBook(navController: NavController, bookId: String) {
     val context = LocalContext.current
     val dataUserStore = UserData(context)
     val getDataUserFromLocal =
-        dataUserStore.getDataUserFromLocal.collectAsStateWithLifecycle(initialValue = User(0, "", ""))
+        dataUserStore.getDataUserFromLocal.collectAsStateWithLifecycle(
+            initialValue = User(
+                0, "",
+                "", "", ""
+            )
+        )
     var idUser by rememberSaveable {
         mutableIntStateOf(0)
     }
     idUser = getDataUserFromLocal.value?.user_id ?: 0
-    val bookViewModel : BookVM = viewModel()
-    val favoriteViewModel : FavoriteVM = viewModel()
+    val bookViewModel: BookVM = viewModel()
+    val favoriteViewModel: FavoriteVM = viewModel()
     val historyViewModel = viewModel<HistoryVM>()
     val data by bookViewModel.bookData
     LaunchedEffect(Unit) {
@@ -158,12 +164,21 @@ fun AboutBook(navController: NavController, bookId : String) {
     var isFollow by rememberSaveable {
         mutableStateOf(false)
     }
-    var dataFavorite = Favorite1(0,0)
+    var dataFavorite = Favorite1(0, 0)
     val historyDataSend by remember {
-        mutableStateOf(History(0,bookId.toInt(), data?.book_name ?: "", Date().toString(),0,"Reading"))
+        mutableStateOf(
+            History(
+                0,
+                bookId.toInt(),
+                data?.book_name ?: "",
+                Date().toString(),
+                0,
+                "Reading"
+            )
+        )
     }
-    if(idUser != 0) {
-        dataFavorite = Favorite1( idUser, bookId.toInt())
+    if (idUser != 0) {
+        dataFavorite = Favorite1(idUser, bookId.toInt())
         favoriteViewModel.IsFollow(dataFavorite)
         historyDataSend.user_id = idUser
         historyViewModel.checkIsRead("${idUser}-${bookId}")
@@ -171,16 +186,18 @@ fun AboutBook(navController: NavController, bookId : String) {
 
     favoriteViewModel.isFollowLiveData.observeForever { newValue -> isFollow = newValue }
     val lastRead by historyViewModel.lastChapterRead.collectAsStateWithLifecycle()
-    val numberOfChapter : Int = data?.number_of_chapter ?: 1
-    val numberOfLikes : Int = data?.number_of_likes ?: 1
+    val numberOfChapter: Int = data?.number_of_chapter ?: 1
+    val numberOfLikes: Int = data?.number_of_likes ?: 1
 
     Column(
         modifier = Modifier.fillMaxSize(),
 
         ) {
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .height(300.dp)) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(300.dp)
+        ) {
             data?.book_id?.let { RenderImage(idBook = it) }
         }
 
@@ -190,15 +207,19 @@ fun AboutBook(navController: NavController, bookId : String) {
                 .padding(start = 16.dp, end = 16.dp),
             horizontalArrangement = Arrangement.SpaceAround
         ) {
-            Column(modifier = Modifier .padding(8.dp)) {
-                Text(text = numberOfLikes.toString(), fontWeight = FontWeight.Bold, fontSize = 24.sp)
+            Column(modifier = Modifier.padding(8.dp)) {
+                Text(
+                    text = numberOfLikes.toString(),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 24.sp
+                )
                 Text(text = stringResource(id = R.string.likes), fontWeight = FontWeight.Light)
             }
-            Column(modifier = Modifier .padding(8.dp)) {
+            Column(modifier = Modifier.padding(8.dp)) {
                 Text(text = "1.87M", fontWeight = FontWeight.Bold, fontSize = 24.sp)
                 Text(text = stringResource(id = R.string.Follows), fontWeight = FontWeight.Light)
             }
-            Column(modifier = Modifier .padding(8.dp)) {
+            Column(modifier = Modifier.padding(8.dp)) {
                 Row(
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
@@ -207,34 +228,39 @@ fun AboutBook(navController: NavController, bookId : String) {
                     Icon(
                         Icons.Filled.Star, "",
                         tint = Color.Yellow,
-                        modifier = Modifier.size(16.dp))
+                        modifier = Modifier.size(16.dp)
+                    )
                 }
                 Text(text = stringResource(id = R.string.Rate), fontWeight = FontWeight.Light)
             }
         }
         Row {
-            if(isFollow) {
-                Button(onClick = {
-                    favoriteViewModel.DeleteFromFavorite("$idUser-$bookId")
-                    isFollow = false
-                },
+            if (isFollow) {
+                Button(
+                    onClick = {
+                        favoriteViewModel.DeleteFromFavorite("$idUser-$bookId")
+                        isFollow = false
+                    },
                     modifier = Modifier.padding(start = 24.dp),
-                    colors = ButtonDefaults.buttonColors()) {
+                    colors = ButtonDefaults.buttonColors()
+                ) {
                     Text(text = stringResource(id = R.string.Unfollow))
                 }
-            }else{
-                Button(onClick = {
-                    favoriteViewModel.AddToFavorite(dataFavorite)
-                    isFollow = true
-                },
+            } else {
+                Button(
+                    onClick = {
+                        favoriteViewModel.AddToFavorite(dataFavorite)
+                        isFollow = true
+                    },
                     modifier = Modifier.padding(start = 24.dp),
-                    colors = ButtonDefaults.buttonColors()) {
+                    colors = ButtonDefaults.buttonColors()
+                ) {
                     Text(text = stringResource(id = R.string.Follow))
                 }
             }
             Spacer(modifier = Modifier.width(16.dp))
             //handle if user already read this book else do not render Button
-            if(lastRead != null && lastRead != 0) {
+            if (lastRead != null && lastRead != 0) {
                 Button(onClick = {
                     navController.navigate("read-book/${bookId}/${lastRead}")
                 }) {
@@ -252,7 +278,7 @@ fun AboutBook(navController: NavController, bookId : String) {
             Text(text = stringResource(id = R.string.Episodes), fontWeight = FontWeight(600))
         }
         Column {
-            data?.book_id?.let { ChapterList(navController, it ,numberOfChapter, historyDataSend)}
+            data?.book_id?.let { ChapterList(navController, it, numberOfChapter, historyDataSend) }
         }
     }
 }

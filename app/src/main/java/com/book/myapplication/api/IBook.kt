@@ -14,7 +14,7 @@ data class ImageListResponse(
 )
 private const val BASE_URL = "http://10.0.2.2:8080/book/"
 
-private val retrofit = Retrofit.Builder()
+private val retrofitBook = Retrofit.Builder()
     .baseUrl(BASE_URL)
     .addConverterFactory(GsonConverterFactory.create())
     .build()
@@ -39,4 +39,4 @@ interface IBook {
     suspend fun getTopTenBook() : Response<List<Book>>
 }
 
-val bookService = retrofit.create(IBook::class.java)
+val bookService: IBook = retrofitBook.create(IBook::class.java)

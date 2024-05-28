@@ -9,10 +9,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.book.myapplication" />
+                  <option name="mobileSdkAppId" value="1:67546694377:android:be62f64d29a5096c21e678" />
+                  <option name="projectId" value="dev-my-bookapp" />
+                  <option name="projectNumber" value="67546694377" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

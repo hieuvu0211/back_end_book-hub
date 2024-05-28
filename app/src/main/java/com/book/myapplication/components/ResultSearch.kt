@@ -21,7 +21,7 @@ import com.book.myapplication.model.Book
 
 @Composable
 fun ResultSearch(navController: NavController, name: String?) {
-    val book_vm: BookVM = viewModel()
+    val bookViewModel: BookVM = viewModel()
     var data = rememberSaveable {
         mutableListOf<Book>()
     }
@@ -33,7 +33,7 @@ fun ResultSearch(navController: NavController, name: String?) {
                 .padding(12.dp)
         ) {
             Text(text = stringResource(id = R.string.result_for) + ": $name")
-            data = book_vm.loadSearchResult(name)
+            data = bookViewModel.loadSearchResult(name)
 
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),

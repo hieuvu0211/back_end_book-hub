@@ -23,7 +23,7 @@ class UserData(private val context:Context) {
             Gson().fromJson(userDataString, User::class.java)
         }
 
-    suspend fun SetDataUserInLocal(data: User?) {
+    suspend fun setDataUserInLocal(data: User?) {
         val dataString = Gson().toJson(data)
         context.dataStore.edit { preferences ->
             preferences[IS_USER_LOGIN] = dataString

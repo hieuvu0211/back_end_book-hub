@@ -1,4 +1,5 @@
 
+import android.annotation.SuppressLint
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
@@ -18,10 +19,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Button
@@ -32,7 +30,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -54,6 +54,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.book.myapplication.GlobalState.UserData
 import com.book.myapplication.R
+import com.book.myapplication.ViewModel.AuthVM
 import com.book.myapplication.ViewModel.UserVM
 import com.book.myapplication.api.HandleError
 import com.book.myapplication.api.userService
@@ -61,9 +62,12 @@ import com.book.myapplication.model.User
 import com.book.myapplication.model.UserLogin
 import kotlinx.coroutines.launch
 
+fun signIn() {
 
+}
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun LoginForm(navController: NavController, viewModel: UserVM) {
+fun LoginForm(navController: NavController, viewModel: UserVM, authViewModel : AuthVM) {
     val imageLogoModifier = Modifier
         .size(200.dp)
         .border(BorderStroke(1.dp, Color.White))
@@ -85,6 +89,9 @@ fun LoginForm(navController: NavController, viewModel: UserVM) {
     val context = LocalContext.current
     val dataUserStore = UserData(context)
     val scope = rememberCoroutineScope()
+    Log.i("resultAPI", "data store = ${dataUserStore.getDataUserFromLocal.collectAsState(initial = null)}")
+    //handle login with SSO(sign in with google)
+    val user by authViewModel.user.observeAsState()
 
 
     Column(
@@ -209,13 +216,13 @@ fun LoginForm(navController: NavController, viewModel: UserVM) {
 
                             //save data user to local
                             scope.launch {
-                                dataUserStore.SetDataUserInLocal(res.body() as User)
+                                dataUserStore.setDataUserInLocal(res.body() as User)
                             }
                             //navigate to main activity
                             navController.navigate("main")
                         }else{
                             //send message to user that login failed
-                            Toast.makeText(context, "Login Failed", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, context.getString(R.string.login_failed), Toast.LENGTH_SHORT).show()
 
                             //handle login click (setup button login can click again)
                             loginClick = false
@@ -253,7 +260,15 @@ fun LoginForm(navController: NavController, viewModel: UserVM) {
                     )
                     Image(
                         painter = painterResource(id = R.drawable.google), contentDescription = "",
-                        modifier = Modifier.size(32.dp)
+                        modifier = Modifier
+                            .size(32.dp)
+                            .clickable(
+                                onClick = {
+                                    if (user == null) {
+                                        authViewModel.signIn()
+                                    }
+                                }
+                            )
                     )
                     Image(
                         painter = painterResource(id = R.drawable.gihub), contentDescription = "",

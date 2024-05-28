@@ -13,7 +13,7 @@ import retrofit2.http.Path
 
 private const val BASE_URL = "http://10.0.2.2:8080/favorite/"
 
-private val retrofit = Retrofit.Builder()
+private val retrofitFavorite = Retrofit.Builder()
     .baseUrl(BASE_URL)
     .addConverterFactory(GsonConverterFactory.create())
     .build()
@@ -34,4 +34,4 @@ interface IFavorite {
     ): Response<Boolean>
 }
 
-val favoriteService: IFavorite = retrofit.create(IFavorite::class.java)
+val favoriteService: IFavorite = retrofitFavorite.create(IFavorite::class.java)
