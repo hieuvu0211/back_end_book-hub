@@ -29,4 +29,9 @@ export class UserController {
   UpdatePasswordController(@Body() data: updatePasswordDto) {
     return this.userService.UpdatePassword(data);
   }
+
+  @Post('ssoregister')
+  SsoRegisterController(@Body() data) {
+    return this.userService.RegisterWithSSO(data);
+  }
 }
