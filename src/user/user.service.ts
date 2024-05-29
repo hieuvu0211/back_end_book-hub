@@ -78,6 +78,7 @@ export class UserService {
     }
 
     async RegisterWithSSO(data: SsoDTO) {
+        console.log("data = ", data)
         try {
             const res = await this.prisma.user.findFirst({
                 where: {
@@ -85,7 +86,18 @@ export class UserService {
                 }
             });
             if(res) {
-                throw new Error('User already exists');
+                //get update information 
+                const ans = await this.prisma.user.update({
+                    where: {
+                        user_id: res.user_id
+                    },
+                    data: {
+                        username: data.username,
+                        imgurl: data.imgurl
+                    }
+                });
+                if(ans) return ans;
+                return res
             }
             else {
                 const user = await this.prisma.user.create({
@@ -103,4 +115,24 @@ export class UserService {
             throw new Error(error);
         }
     }
+
+    //handle user upload file type image
+    async handleFileUpload(id: string, filename: string) {
+        //update image url to db
+        try {
+            const res = await this.prisma.user.update({
+                where: {
+                    user_id: parseInt(id)
+                },
+                data: {
+                    imgurl: `http://10.0.2.2:8080/userUpload/${filename}`
+                }
+            });
+            if(res) return res;
+            else throw new Error('Image not updated');
+        }catch(error) {
+            throw new Error("Error updating image url");
+        }
+    }
+    
 }
