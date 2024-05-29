@@ -75,7 +75,6 @@ class AuthVM(application: Application) : AndroidViewModel(application) {
 
                 val currentUser = firebaseAuth.currentUser
                 currentUser?.let {
-                    Log.i("resultAPI", "info user = ${it.uid} ${it.displayName} ${it.email} ${it.photoUrl}")
                     val res = userService.ssoRegister(UserSSORegister(it.uid, it.displayName ?: it.email ?: "unknown",
                         (it.photoUrl ?: "").toString()
                     ))
