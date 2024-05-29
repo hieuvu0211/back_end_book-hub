@@ -121,6 +121,20 @@ fun ListSettings(navController: NavController) {
         Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, "")
     }
     Spacer(modifier = Modifier.height(10.dp))
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .size(30.dp)
+            .padding(horizontal = 8.dp)
+            .clickable {
+                navController.navigate("change-avatar")
+            },
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(text = stringResource(id = R.string.change_avatar))
+        Spacer(modifier = Modifier.weight(1f))
+        Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, "")
+    }
 }
 
 @Preview(showBackground = true)

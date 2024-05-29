@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.book.myapplication.R
 import com.book.myapplication.ViewModel.DarkModeVM
+import com.book.myapplication.components.ScreenView
 
 @Composable
 fun DarkModeView(navController : NavController, darkThemeViewModel: DarkModeVM){
@@ -53,7 +54,7 @@ fun DarkModeView(navController : NavController, darkThemeViewModel: DarkModeVM){
                 Icons.AutoMirrored.Filled.ArrowBack, "", modifier = Modifier
                     .size(40.dp)
                     .clickable {
-                        navController.navigate("account")
+                        navController.navigate(ScreenView.SettingView("0"))
                     })
             Spacer(modifier = Modifier.weight(0.8f))
             Text(text = stringResource(id = R.string.dark_mode), fontSize = 30.sp, fontWeight = FontWeight(600))

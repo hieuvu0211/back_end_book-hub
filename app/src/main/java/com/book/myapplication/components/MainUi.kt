@@ -255,7 +255,6 @@ fun MainUi(navController: NavController) {
         mutableIntStateOf(0)
     }
     idUser = getDataUserFromLocal.value?.user_id ?: 0
-    Log.i("resultAPI", "idUser: ${getDataUserFromLocal.value}")
     Scaffold(
         bottomBar = {
             BottomAppBar(
@@ -298,7 +297,7 @@ fun MainUi(navController: NavController) {
                             )
                         }
                         IconButton(onClick = {
-                            navController.navigate("auth-login")
+                            navController.navigate("change-avatar")
                         }) {
                             Icon(
                                 Icons.Default.Search,

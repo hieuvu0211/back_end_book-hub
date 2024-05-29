@@ -43,6 +43,7 @@ import com.book.myapplication.components.MainUi
 import com.book.myapplication.components.ReadBook
 import com.book.myapplication.components.ResultSearch
 import com.book.myapplication.components.ScreenView
+import com.book.myapplication.components.Settings.ChooseImage
 import com.book.myapplication.components.Settings.DarkModeView
 import com.book.myapplication.components.Settings.LanguageView
 import com.book.myapplication.components.Settings.SettingView
@@ -140,10 +141,10 @@ fun Navigator(context : Context, darkThemeViewModel : DarkModeVM, authViewModel 
             val name = backStackEntry.arguments?.getString("name") ?: ""
             ResultSearch(navController, name = name)
         }
-        composable(route = "account") { backStackEntry ->
+        composable(route = "account") {
             AboutAccount(navController, authViewModel)
         }
-        composable(route = "history") { backStackEntry ->
+        composable(route = "history") {
             HistoryView(navController)
         }
         composable<ScreenView.SettingView>{backStackEntry ->
@@ -159,6 +160,9 @@ fun Navigator(context : Context, darkThemeViewModel : DarkModeVM, authViewModel 
         }
         composable(route = "auth-login") {
             LoginAuth(authViewModel = authViewModel)
+        }
+        composable(route = "change-avatar") {
+            ChooseImage(navController = navController)
         }
     }
 }

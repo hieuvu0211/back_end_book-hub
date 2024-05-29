@@ -36,6 +36,7 @@ import androidx.navigation.compose.rememberNavController
 import com.book.myapplication.GlobalState.LanguageData
 import com.book.myapplication.R
 import com.book.myapplication.ViewModel.LanguageVM
+import com.book.myapplication.components.ScreenView
 import java.util.Locale
 
 @Composable
@@ -64,7 +65,7 @@ fun LanguageView(navController: NavController, context : Context) {
                 Icons.AutoMirrored.Filled.ArrowBack, "", modifier = Modifier
                     .size(40.dp)
                     .clickable {
-                        navController.navigate("account")
+                        navController.navigate(ScreenView.SettingView("0"))
                     })
             Spacer(modifier = Modifier.weight(0.8f))
             Text(text = stringResource(id = R.string.language), fontSize = 30.sp, fontWeight = FontWeight(600))

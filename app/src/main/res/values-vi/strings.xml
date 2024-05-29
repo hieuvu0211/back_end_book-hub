@@ -55,4 +55,5 @@
     <string name="light_mode_is_turn_on">"Đã bật chế độ sáng "</string>
     <string name="dark_mode_is_turn_on">"Đã bật chế độ tối "</string>
     <string name="like2">"Lượt thích "</string>
+    <string name="change_avatar">Thay đổi hình đại diện</string>
 </resources>
